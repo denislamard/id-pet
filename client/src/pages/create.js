@@ -8,6 +8,7 @@ class CreatePage extends BasePage {
     constructor(props) {
         super(props);
         this.state = {
+            ...this.state,
             formActivePanel1: 1,
             formActivePanel1Changed: false,
             firstname: null,
@@ -17,32 +18,26 @@ class CreatePage extends BasePage {
             petcolor: null,
             pettype: null,
             petbirthdate: null,
-            imageBuffer: null
+            photo_hash: null,
+            terms: false
         }
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handlePetBirthdate = this.handlePetBirthdate.bind(this);
         this.handleSelectPetType = this.handleSelectPetType.bind(this);
         this.handlePhotoChange = this.handlePhotoChange.bind(this);
+        this.handleTerms = this.handleTerms.bind(this);
     }
 
     handleChange(event) {
+        console.log(event.target.name);
+        console.log(event.target.value);
+        console.log(event.target);
         this.setState({[event.target.name]: event.target.value});
     }
 
     handleSubmit() {
-        console.log('*****************************');
         console.log(this.state);
-
-
-        let data = new FormData();
-        data.append('file', this.state.photo);
-        console.log('submit', data)
-        console.log('*****************************');
-
-
-
-
         alert('Form submitted!');
     }
 
@@ -54,44 +49,24 @@ class CreatePage extends BasePage {
         this.setState({petbirthdate: value});
     }
 
-    handlePhotoChange = (file) => {
-        let reader = new window.FileReader();
-        reader.readAsArrayBuffer(file);
-        //reader.onloadend = () => this.convertToBuffer(reader);
-        reader.onloadend = () => this.convertToBuffer(reader);
+    handleTerms = (value) => {
+        this.setState({terms: value});
     }
 
-    convertToBuffer = async (reader) => {
-        const buffer = await Buffer.from(reader.result);
-        this.setState({
-            imageBuffer: buffer
-        });
-    };
+    handlePhotoChange = (file) => {
+        this.saveToIpfsWithFilename(file);
+    }
 
-
-    /*
-        captureFile = (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        const file = e.target.files[0];
-        let reader = new window.FileReader();
-        reader.readAsArrayBuffer(file);
-        reader.onloadend = () => this.convertToBuffer(reader)
-    };
-
-    convertToBuffer = async (reader) => {
-        // file is converted to a imageBuffer to prepare for uploading to IPFS
-        const myBuffer = await Buffer.from(reader.result);
-        // set this imageBuffer -using es6 syntax
-        this.setState({
-            myToken: {
-                ...this.state.myToken,
-                imageBuffer: myBuffer
-            }
-        });
-    };
-
-     */
+    async saveToIpfsWithFilename(file) {
+        try {
+            const fileDetails = {path: file.name, content: file, added_file_hash: null}
+            const added = await this.state.ipfs.add(fileDetails);
+            this.setState({photo_hash: added.cid.toString()});
+            console.log(added.cid.toString());
+        } catch (err) {
+            console.error(err)
+        }
+    }
 
     calculateAutofocus = (a) => {
         if (this.state['formActivePanel' + a + 'Changed']) {
@@ -189,12 +164,12 @@ class CreatePage extends BasePage {
                         <h4 className="font-weight-bold mt-5 grey-text"><MDBIcon icon="check"/> Registration completed!</h4>
                         <div className="px-4">
                             <p className="font-weight-bold mt-3 mb-1"><strong>Terms and conditions</strong></p>
-                            <MDBInput label="I agreee to the terms and conditions" type="checkbox" id="checkbox" autoFocus={this.calculateAutofocus(1)}/>
+                            <MDBInput name="terms" value={this.state.firstname} getValue={this.handleTerms} label="I agreee to the terms and conditions" type="checkbox" id="checkbox" autoFocus={this.calculateAutofocus(1)}/>
                             <MDBInput label="I want to receive newsletter" type="checkbox" id="checkbox2"/>
                             <div className="text-right mt-2">
                                 <MDBBtn outline color="grey"
                                         onClick={this.handleSubmit}>cancel</MDBBtn>
-                                <MDBBtn outline color="success"
+                                <MDBBtn outline color="success" disabled={this.state.photo_hash === null || this.state.terms === false}
                                         onClick={this.handleSubmit}>submit</MDBBtn>
                             </div>
                         </div>

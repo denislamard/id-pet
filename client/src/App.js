@@ -14,12 +14,13 @@ import Test from "./pages/test";
 import {getWeb3} from "./utils/web3";
 import './App.css';
 import {MDBCol, MDBContainer, MDBRow, MDBSpinner} from "mdbreact";
+import ipfsClient from "ipfs-http-client";
 
 
 class App extends Component {
     constructor(props) {
         super(props);
-        this.state = {web3: null, account: null};
+        this.state = {web3: null, account: null, ipfs: null};
     }
 
     componentWillMount() {
@@ -27,12 +28,14 @@ class App extends Component {
     }
 
     async loadBlockchainData() {
+        const ipfs = await ipfsClient('https://ipfs.infura.io:5001/api/v0/');
         const web3 = await getWeb3();
         const accounts = await web3.eth.getAccounts();
         this.setState({
             web3: web3,
             account: accounts[0],
-            balance: web3.utils.fromWei(await web3.eth.getBalance(accounts[0]), 'ether')
+            balance: web3.utils.fromWei(await web3.eth.getBalance(accounts[0]), 'ether'),
+            ipfs: ipfs
         });
     }
 
@@ -63,22 +66,22 @@ class App extends Component {
                 <Router>
                     <Switch>
                         <Route path="/" exact>
-                            <MainPage web3={this.state.web3} account={this.state.account}/>
+                            <MainPage web3={this.state.web3} account={this.state.account} ipfs={this.state.ipfs}/>
                         </Route>
                         <Route path="/create" exact>
-                            <CreatePage web3={this.state.web3} account={this.state.account}/>
+                            <CreatePage web3={this.state.web3} account={this.state.account} ipfs={this.state.ipfs}/>
                         </Route>
                         <Route path="/find" exact>
-                            <FindPage web3={this.state.web3} account={this.state.account}/>
+                            <FindPage web3={this.state.web3} account={this.state.account} ipfs={this.state.ipfs}/>
                         </Route>
                         <Route path="/list" exact>
-                            <ListPage web3={this.state.web3} account={this.state.account}/>
+                            <ListPage web3={this.state.web3} account={this.state.account} ipfs={this.state.ipfs}/>
                         </Route>
                         <Route path="/change" exact>
-                            <ChangePage web3={this.state.web3} account={this.state.account}/>
+                            <ChangePage web3={this.state.web3} account={this.state.account} ipfs={this.state.ipfs}/>
                         </Route>
                         <Route path="/test" exact>
-                            <Test web3={this.state.web3} account={this.state.account}/>
+                            <Test web3={this.state.web3} account={this.state.account} ipfs={this.state.ipfs}/>
                         </Route>
                         <Route path="*" component={NotFoundPage}/>
                     </Switch>
