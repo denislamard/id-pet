@@ -19,8 +19,8 @@ const Header = (props) => {
                     </MDBTooltip>
                 </MDBCol>
                 <MDBCol md="8">
-                    <h2 className="h1 display-3 indigo-text">ID-Pet DAPPlication</h2>
-                    <p className="lead text-justify grey-text">This is a simple example of a decentralized
+                    <h2 className="indigo-text text-center" style={{fontSize: "4em", fontWeight: "bolder"}}>ID-PET  D-APPLICATION</h2>
+                    <p className="lead text-justify grey-text mt-4">This is a simple example of a decentralized
                         application based on unique non-fungible tokens on the Ethereum ERC721 blockchain.
                         Its main goal is to identify pets on the Ethereum blockchain.
                     </p>
