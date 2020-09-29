@@ -2,6 +2,7 @@ import React, {Fragment} from "react";
 import {BasePage} from './base';
 import {MDBAlert, MDBBtn, MDBCol, MDBContainer, MDBDatePicker, MDBIcon, MDBInput, MDBRow, MDBSelect, MDBSelectInput, MDBSelectOption, MDBSelectOptions} from "mdbreact";
 import MDBFileupload from "mdb-react-fileupload";
+import ModalPage from "../components/popup";
 
 
 const ErrorMessage = (props) => {
@@ -19,11 +20,9 @@ class CreatePage extends BasePage {
         this.state = {
             ...this.state,
             redirect: false,
-            formActivePanel1: 1,
-            formActivePanel1Changed: false,
             firstname: null,
             lastname: null,
-            email: null,
+            email: "denis@exemple.com",
             petname: null,
             petcolor: null,
             pettype: null,
@@ -90,15 +89,16 @@ class CreatePage extends BasePage {
     render() {
         const {redirect} = this.state;
 
-        /*
+
         if (redirect) {
-            return <Redirect to='/somewhere'/>;
+            //return <Redirect to='/somewhere'/>;
         }
-        */
+
 
         return (
             <Fragment>
                 <MDBContainer>
+                    <ModalPage isOpen={this.state.redirect}/>
                     <h2 className="indigo-text font-weight-bold mt-2 mb-5"><MDBIcon far icon="edit"/> Create an ID for
                         your pet</h2>
                     <form className="needs-validation" onSubmit={this.handleSubmit}>

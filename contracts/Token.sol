@@ -29,6 +29,10 @@ contract Token is ERC721, Ownable {
         string photo_hash;
     }
 
+    event AddToken(
+        uint256 indexed id
+    );
+
     /*
                 firstname: null,
             lastname: null,
@@ -54,13 +58,14 @@ contract Token is ERC721, Ownable {
         _setBaseURI(baseURI);
     }
 
-    function addPet(address owner, PetInfo memory info) public payable returns (uint256 Id) {
+    //function addPet(address owner, PetInfo memory info) public payable returns (uint256 Id) {
+    function addPet(address owner) public payable returns (uint256 Id) {
         _petIds.increment();
         Id = _petIds.current();
         _mint(owner, Id);
         _setTokenURI(Id, Id.toString());
-        _list_pets[Id] = info;
-
+        //_list_pets[Id] = info;
+	AddToken(Id);
         return Id;
     }
 
