@@ -40,3 +40,9 @@
 .create-div {
   height: 3em;
 }
+
+.hidden {
+  display:none;
+}
+
+

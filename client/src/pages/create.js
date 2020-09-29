@@ -1,20 +1,16 @@
 import React, {Fragment} from "react";
-import {Redirect} from 'react-router'
 import {BasePage} from './base';
-import {
-    MDBBtn,
-    MDBCol,
-    MDBContainer,
-    MDBDatePicker,
-    MDBIcon,
-    MDBInput,
-    MDBRow,
-    MDBSelect,
-    MDBSelectInput,
-    MDBSelectOption,
-    MDBSelectOptions
-} from "mdbreact";
+import {MDBAlert, MDBBtn, MDBCol, MDBContainer, MDBDatePicker, MDBIcon, MDBInput, MDBRow, MDBSelect, MDBSelectInput, MDBSelectOption, MDBSelectOptions} from "mdbreact";
 import MDBFileupload from "mdb-react-fileupload";
+
+
+const ErrorMessage = (props) => {
+    return (
+        <div className={props.hidden === true ? "hidden" : ""}>
+            <MDBAlert color="danger">{props.message}</MDBAlert>
+        </div>
+    );
+}
 
 class CreatePage extends BasePage {
 
@@ -115,6 +111,7 @@ class CreatePage extends BasePage {
                                               label="Your firstname" icon="user-edit"
                                               type="text" required validate
                                     />
+
                                 </div>
                                 <div className={"create-div"}>
                                     <MDBInput name="lastname" onChange={this.handleChange} value={this.state.lastname}
@@ -207,7 +204,8 @@ class CreatePage extends BasePage {
                                 <MDBInput label="I want to receive newsletter" type="checkbox" id="checkbox2"/>
                                 <div className="text-right mt-2">
                                     <MDBBtn outline color="grey">cancel</MDBBtn>
-                                    <MDBBtn outline color="success" type="submit">submit</MDBBtn>
+                                    <MDBBtn outline color="success" type="submit">
+                                        submit</MDBBtn>
                                 </div>
                             </div>
                         </div>
@@ -218,6 +216,6 @@ class CreatePage extends BasePage {
     }
 }
 
-//disabled={this.state.photo_hash === null || this.state.terms === false}
+// disabled={this.state.photo_hash === null || this.state.terms === false}
 
 export default CreatePage;

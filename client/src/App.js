@@ -11,7 +11,7 @@ import Header from './components/header';
 import Footer from "./components/footer";
 import {Title} from "./components/title";
 import Test from "./pages/test";
-import SignupForm from "./pages/test-formik";
+import Test1 from "./pages/test-formik";
 import {getWeb3} from "./utils/web3";
 import './App.css';
 import {MDBCol, MDBContainer, MDBRow, MDBSpinner} from "mdbreact";
@@ -82,7 +82,7 @@ class App extends Component {
                             <ChangePage web3={this.state.web3} account={this.state.account} ipfs={this.state.ipfs}/>
                         </Route>
                         <Route path="/test" exact>
-                            <SignupForm web3={this.state.web3} account={this.state.account} ipfs={this.state.ipfs}/>
+                            <Test1 web3={this.state.web3} account={this.state.account} ipfs={this.state.ipfs}/>
                         </Route>
                         <Route path="*" component={NotFoundPage}/>
                     </Switch>
