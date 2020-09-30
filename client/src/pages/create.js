@@ -1,14 +1,61 @@
 import React, {Fragment} from "react";
 import {BasePage} from './base';
 import {Redirect} from 'react-router'
-import {MDBAlert, MDBBtn, MDBCol, MDBContainer, MDBDatePicker, MDBIcon, MDBInput, MDBRow, MDBSelect, MDBSelectInput, MDBSelectOption, MDBSelectOptions} from "mdbreact";
+import {
+    MDBAlert,
+    MDBBtn,
+    MDBCol,
+    MDBContainer,
+    MDBDatePicker,
+    MDBIcon,
+    MDBInput,
+    MDBRow,
+    MDBSelect,
+    MDBSelectInput,
+    MDBSelectOption,
+    MDBSelectOptions,
+    MDBTypography
+} from "mdbreact";
 import MDBFileupload from "mdb-react-fileupload";
 
 
+/*
+
+var tifs = {1: 'Joe', 2: 'Jane'};
+...
+
+return (
+   <select id="tif" name="tif" onChange={this.handleChange}>
+      { Object.entries(tifs).map((t,k) => <option key={k} value={t[0]}>{t[1]}</option>) }
+   </select>
+)
+ */
+
 const ErrorMessage = (props) => {
+    const fields = props.fields;
     return (
-        <div className={props.hidden === true ? "hidden" : ""}>
-            <MDBAlert color="danger">{props.message}</MDBAlert>
+        <div>
+            {fields.length > 0 &&
+            <MDBContainer className="mt-4">
+                <MDBAlert color="danger">
+                    <MDBTypography tag='h6' variant="h6">Submitting failed</MDBTypography>
+                    {
+                        fields.map((field) =>
+                            <MDBRow>
+                                <MDBCol size="1" className="ml-3">
+                                    <MDBIcon icon="exclamation-triangle" className="red-text"/>
+                                </MDBCol>
+                                <MDBCol xl="10" size="11">
+                                    <p className="grey-text"><span className="red-text">{field}:</span> Please
+                                        complete
+                                        this field</p>
+                                </MDBCol>
+                            </MDBRow>
+                        )
+                    }
+                </MDBAlert>
+            </MDBContainer>
+            }
         </div>
     );
 }
@@ -22,13 +69,14 @@ class CreatePage extends BasePage {
             redirect: false,
             firstname: null,
             lastname: null,
-            email: "denis@exemple.com",
+            email: null,
             petname: null,
             petcolor: null,
             pettype: null,
             petbirthdate: null,
             photo_hash: null,
-            terms: false
+            terms: false,
+            fields: [],
         }
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -38,17 +86,46 @@ class CreatePage extends BasePage {
         this.handleTerms = this.handleTerms.bind(this);
     }
 
-    handleChange(event) {
-        console.log(event.target.name);
-        console.log(event.target.value);
-        console.log(event.target);
-        this.setState({[event.target.name]: event.target.value});
-    }
-
     handleSubmit(event) {
         event.preventDefault();
-        console.log(this.state);
-        this.setState({redirect: true});
+
+        let fields = [];
+
+        if (this.state.firstname === null || this.state.firstname === "") {
+            fields.push("FirstName");
+        }
+        if (this.state.lastname === null || this.state.lastname === "") {
+            fields.push("Lastname");
+        }
+        if (this.state.email === null || this.state.email === "") {
+            fields.push("Email");
+        }
+        if (this.state.petname === null || this.state.petname === "") {
+            fields.push("Name of your pet");
+        }
+        if (this.state.petcolor === null || this.state.petcolor === "") {
+            fields.push("Color of your pet");
+        }
+        if (this.state.pettype === null || this.state.pettype === "") {
+            fields.push("kind of your pet");
+        }
+        if (this.state.petbirthdate === null || this.state.petbirthdate === "") {
+            fields.push("Birthdate of your pet");
+        }
+        if (this.state.photo_hash === null || this.state.photo_hash === "") {
+            fields.push("Photo of your pet");
+        }
+        if (this.state.terms === false) {
+            fields.push("Terms must be accepted");
+        }
+
+        this.setState({fields: fields});
+        this.setState({redirect: fields.length === 0});
+    }
+
+
+    handleChange(event) {
+        this.setState({[event.target.name]: event.target.value});
     }
 
     handleSelectPetType = (value) => {
@@ -85,21 +162,16 @@ class CreatePage extends BasePage {
         }
     }
 
-
     render() {
-        const {redirect} = this.state;
-
-
-        if (redirect) {
-            return <Redirect to='/somewhere'/>;
+        if (this.state.redirect === true) {
+            return <Redirect to='/'/>;
         }
-
         return (
             <Fragment>
                 <MDBContainer>
                     <h2 className="indigo-text font-weight-bold mt-2 mb-5"><MDBIcon far icon="edit"/> Create an ID for
                         your pet</h2>
-                    <form className="needs-validation" onSubmit={this.handleSubmit}>
+                    <form className="needs-validation">
                         <div className="indigo-text">
                             <h4 className="font-weight-bold grey-text"><MDBIcon icon="user"/> Some information about You
                             </h4>
@@ -107,21 +179,15 @@ class CreatePage extends BasePage {
                                 <div className={"create-div"}>
                                     <MDBInput name="firstname" onChange={this.handleChange} value={this.state.firstname}
                                               label="Your firstname" icon="user-edit"
-                                              type="text" required validate
-                                    />
-
+                                              type="text"/>
                                 </div>
                                 <div className={"create-div"}>
                                     <MDBInput name="lastname" onChange={this.handleChange} value={this.state.lastname}
-                                              label="Your lastname" icon="user-edit" group
-                                              type="text" required validate
-                                    />
+                                              label="Your lastname" icon="user-edit" group type="text"/>
                                 </div>
                                 <div className={"create-div"}>
                                     <MDBInput name="email" onChange={this.handleChange} value={this.state.email}
-                                              label="Your email" icon="envelope" group type="email"
-                                              validate required
-                                    />
+                                              label="Your email" icon="envelope" group type="email"/>
                                 </div>
                             </div>
                             <h4 className="font-weight-bold mt-5 grey-text"><MDBIcon icon="paw"/> Information of your
@@ -129,21 +195,17 @@ class CreatePage extends BasePage {
                             <div className="px-4">
                                 <div className={"create-div"}>
                                     <MDBInput name="petname" onChange={this.handleChange} value={this.state.petname}
-                                              label="Name" icon="paw" group type="text"
-                                              required validate
-                                    />
+                                              label="Name" icon="paw" group type="text"/>
                                 </div>
                                 <div className={"create-div"}>
                                     <MDBInput name="petcolor" onChange={this.handleChange} value={this.state.petcolor}
-                                              label="Color" icon="paw" group type="text"
-                                              required validate
-                                    />
+                                              label="Color" icon="paw" group type="text"/>
                                 </div>
                                 <MDBContainer>
                                     <MDBRow middle>
                                         <MDBCol sm="8">
                                             <div className={"create-div"}>
-                                                <MDBSelect label='Kind of pet' getValue={this.handleSelectPetType} required validate>
+                                                <MDBSelect label='Kind of pet' getValue={this.handleSelectPetType}>
                                                     <MDBSelectInput selected="aaa"/>
                                                     <MDBSelectOptions>
                                                         <MDBSelectOption disabled>Kind of your pet</MDBSelectOption>
@@ -202,10 +264,10 @@ class CreatePage extends BasePage {
                                 <MDBInput label="I want to receive newsletter" type="checkbox" id="checkbox2"/>
                                 <div className="text-right mt-2">
                                     <MDBBtn outline color="grey">cancel</MDBBtn>
-                                    <MDBBtn outline color="success" type="submit">
-                                        submit</MDBBtn>
+                                    <MDBBtn outline color="success" onClick={this.handleSubmit}>submit</MDBBtn>
                                 </div>
                             </div>
+                            <ErrorMessage fields={this.state.fields}/>
                         </div>
                     </form>
                 </MDBContainer>
@@ -213,7 +275,5 @@ class CreatePage extends BasePage {
         )
     }
 }
-
-// disabled={this.state.photo_hash === null || this.state.terms === false}
 
 export default CreatePage;
