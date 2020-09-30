@@ -11,8 +11,6 @@ import Header from './components/header';
 import Footer from "./components/footer";
 import {Title} from "./components/title";
 
-import Test from "./pages/test";
-import Test1 from "./pages/test-formik";
 import CallPage from "./pages/test-call";
 
 import {getWeb3} from "./utils/web3";
