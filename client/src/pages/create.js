@@ -36,7 +36,7 @@ return (
 
 
 const ValidationPopup = (props) => {
-    const birthdate = props.birthdate !== null ? props.birthdate.toLocaleString() : null;
+    const birthdate = props.birthdate !== null ? props.birthdate.toLocaleString().substring(1, 10) : null;
     return (
         <MDBContainer>
             <MDBModal isOpen={props.isOpen}>
@@ -46,9 +46,8 @@ const ValidationPopup = (props) => {
                         <MDBRow>
                             <MDBCol md="1">
                                 <img
-                                    src="https://ipfs.io/ipfs/QmcTqTLryudDqWG8cJGBqozay9hpy2sdid3UVig6dQHXB6"
+                                    src={"https://ipfs.io/ipfs/".concat(props.photo)}
                                     style={{width: "7em"}}/>
-
                             </MDBCol>
                             <MDBCol md="8" className="ml-auto">
                                 <p className="py-0 my-1">Name: <strong>{props.name}</strong></p>
