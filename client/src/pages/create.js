@@ -6,14 +6,15 @@ import {
     MDBBtn,
     MDBCol,
     MDBContainer,
-    MDBDatePicker,
+    MDBDatePicker, MDBFooter,
     MDBIcon,
-    MDBInput,
+    MDBInput, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader,
     MDBRow,
     MDBSelect,
     MDBSelectInput,
     MDBSelectOption,
     MDBSelectOptions,
+    MDBSpinner,
     MDBTypography
 } from "mdbreact";
 import MDBFileupload from "mdb-react-fileupload";
@@ -30,7 +31,51 @@ return (
       { Object.entries(tifs).map((t,k) => <option key={k} value={t[0]}>{t[1]}</option>) }
    </select>
 )
- */
+
+*/
+
+
+const ValidationPopup = (props) => {
+    const birthdate = props.birthdate !== null ? props.birthdate.toLocaleString() : null;
+    return (
+        <MDBContainer>
+            <MDBModal isOpen={props.isOpen}>
+                <MDBModalHeader toggle={props.isOpen}>Waiting for registering your pet</MDBModalHeader>
+                <MDBModalBody>
+                    <MDBContainer fluid>
+                        <MDBRow>
+                            <MDBCol md="1">
+                                <img
+                                    src="https://ipfs.io/ipfs/QmcTqTLryudDqWG8cJGBqozay9hpy2sdid3UVig6dQHXB6"
+                                    style={{width: "7em"}}/>
+
+                            </MDBCol>
+                            <MDBCol md="8" className="ml-auto">
+                                <p className="py-0 my-1">Name: <strong>{props.name}</strong></p>
+                                <p className="py-0  my-1">Type: <strong>{props.kindpet}</strong></p>
+                                <p className="py-0  my-1">Birthdate :<strong>{birthdate}</strong></p>
+                                <p className="py-0  my-1">Color: <strong>{props.color}</strong></p>
+
+                            </MDBCol>
+                        </MDBRow>
+                        <MDBRow>
+                            <MDBCol md="12">
+                                <div className="text-center my-3">
+                                    <MDBSpinner multicolor/>
+                                </div>
+                            </MDBCol>
+                        </MDBRow>
+                    </MDBContainer>
+                </MDBModalBody>
+                <MDBModalFooter>
+                    <MDBBtn color="success" onClick={props.closeModal}>Close</MDBBtn>
+                </MDBModalFooter>
+            </MDBModal>
+        </MDBContainer>
+    )
+        ;
+}
+
 
 const ErrorMessage = (props) => {
     const fields = props.fields;
@@ -68,7 +113,8 @@ class CreatePage extends BasePage {
         this.state = {
             ...this.state,
             redirect: false,
-            isCall: false,
+            openModal: false,
+            fields: [],
             firstname: null,
             lastname: null,
             email: null,
@@ -77,8 +123,7 @@ class CreatePage extends BasePage {
             pettype: null,
             petbirthdate: null,
             photo_hash: null,
-            terms: false,
-            fields: [],
+            terms: false
         }
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -122,7 +167,7 @@ class CreatePage extends BasePage {
         }
 
         this.setState({fields: fields});
-        this.setState({isCall: fields.length === 0 ? true : false});
+        this.setState({openModal: fields.length === 0 ? true : false});
         console.log(this.state);
     }
 
@@ -143,7 +188,6 @@ class CreatePage extends BasePage {
     }
 
     handleSelectPetType = (value) => {
-        console.log(value);
         this.setState({pettype: value[0]});
     }
 
@@ -176,13 +220,17 @@ class CreatePage extends BasePage {
         }
     }
 
+    closeModal = () => {
+        this.setState({openModal: false});
+    }
+
     render() {
         if (this.state.redirect === true) {
             return <Redirect to='/'/>;
         }
         return (
             <Fragment>
-                <ModalPage isOpen={this.state.isCall}/>
+                <ValidationPopup isOpen={this.state.openModal} closeModal={this.closeModal} name={this.state.petname} kindpet={this.state.pettype} color={this.state.petcolor} birthdate={this.state.petbirthdate} photo={this.state.photo_hash} />
                 <MDBContainer>
                     <h2 className="indigo-text font-weight-bold mt-2 mb-5"><MDBIcon far icon="edit"/> Create an ID for
                         your pet</h2>
