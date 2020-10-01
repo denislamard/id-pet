@@ -1,35 +1,43 @@
-import React, {Component} from 'react';
-import {MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader} from 'mdbreact';
+import React from 'react';
+import {MDBBtn, MDBCol, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBRow, MDBSpinner} from 'mdbreact';
 
-class ModalPage extends Component {
+const ValidationPopup = (props) => {
+    const birthdate = props.birthdate !== null ? props.birthdate.toLocaleString().substring(1, 10) : null;
+    return (
+        <MDBContainer>
+            <MDBModal isOpen={props.isOpen}>
+                <MDBModalHeader toggle={props.isOpen}>Waiting for registering your pet</MDBModalHeader>
+                <MDBModalBody>
+                    <MDBContainer fluid>
+                        <MDBRow>
+                            <MDBCol md="1">
+                                <img
+                                    src={"https://ipfs.io/ipfs/".concat(props.photo)}
+                                    style={{width: "7em"}}/>
+                            </MDBCol>
+                            <MDBCol md="8" className="ml-auto">
+                                <p className="py-0 my-1">Name: <strong>{props.name}</strong></p>
+                                <p className="py-0  my-1">Type: <strong>{props.kindpet}</strong></p>
+                                <p className="py-0  my-1">Birthdate :<strong>{birthdate}</strong></p>
+                                <p className="py-0  my-1">Color: <strong>{props.color}</strong></p>
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            modal: props.isOpen
-        };
-    }
-
-    close = () => {
-        this.setState({modal: false});
-    }
-
-    render() {
-        return (
-            <MDBContainer>
-                <MDBModal isOpen={this.state.modal}>
-                    <MDBModalHeader toggle={this.toggle}>MDBModal title</MDBModalHeader>
-                    <MDBModalBody>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                        nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                    </MDBModalBody>
-                    <MDBModalFooter>
-                        <MDBBtn color="secondary" onClick={this.close}>Close</MDBBtn>
-                    </MDBModalFooter>
-                </MDBModal>
-            </MDBContainer>
-        );
-    }
+                            </MDBCol>
+                        </MDBRow>
+                        <MDBRow>
+                            <MDBCol md="12">
+                                <div className="text-center my-3">
+                                    <MDBSpinner multicolor/>
+                                </div>
+                            </MDBCol>
+                        </MDBRow>
+                    </MDBContainer>
+                </MDBModalBody>
+                <MDBModalFooter>
+                    <MDBBtn color="success" onClick={props.closeModal}>Close</MDBBtn>
+                </MDBModalFooter>
+            </MDBModal>
+        </MDBContainer>
+    );
 }
 
-export default ModalPage;
+export default ValidationPopup;

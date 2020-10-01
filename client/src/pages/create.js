@@ -6,19 +6,19 @@ import {
     MDBBtn,
     MDBCol,
     MDBContainer,
-    MDBDatePicker, MDBFooter,
+    MDBDatePicker,
     MDBIcon,
-    MDBInput, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader,
+    MDBInput,
     MDBRow,
     MDBSelect,
     MDBSelectInput,
     MDBSelectOption,
     MDBSelectOptions,
-    MDBSpinner,
     MDBTypography
 } from "mdbreact";
 import MDBFileupload from "mdb-react-fileupload";
-import ModalPage from './modal';
+import ValidationPopup from './modal';
+import validator from 'validator';
 
 
 /*
@@ -33,48 +33,6 @@ return (
 )
 
 */
-
-
-const ValidationPopup = (props) => {
-    const birthdate = props.birthdate !== null ? props.birthdate.toLocaleString().substring(1, 10) : null;
-    return (
-        <MDBContainer>
-            <MDBModal isOpen={props.isOpen}>
-                <MDBModalHeader toggle={props.isOpen}>Waiting for registering your pet</MDBModalHeader>
-                <MDBModalBody>
-                    <MDBContainer fluid>
-                        <MDBRow>
-                            <MDBCol md="1">
-                                <img
-                                    src={"https://ipfs.io/ipfs/".concat(props.photo)}
-                                    style={{width: "7em"}}/>
-                            </MDBCol>
-                            <MDBCol md="8" className="ml-auto">
-                                <p className="py-0 my-1">Name: <strong>{props.name}</strong></p>
-                                <p className="py-0  my-1">Type: <strong>{props.kindpet}</strong></p>
-                                <p className="py-0  my-1">Birthdate :<strong>{birthdate}</strong></p>
-                                <p className="py-0  my-1">Color: <strong>{props.color}</strong></p>
-
-                            </MDBCol>
-                        </MDBRow>
-                        <MDBRow>
-                            <MDBCol md="12">
-                                <div className="text-center my-3">
-                                    <MDBSpinner multicolor/>
-                                </div>
-                            </MDBCol>
-                        </MDBRow>
-                    </MDBContainer>
-                </MDBModalBody>
-                <MDBModalFooter>
-                    <MDBBtn color="success" onClick={props.closeModal}>Close</MDBBtn>
-                </MDBModalFooter>
-            </MDBModal>
-        </MDBContainer>
-    )
-        ;
-}
-
 
 const ErrorMessage = (props) => {
     const fields = props.fields;
@@ -113,16 +71,16 @@ class CreatePage extends BasePage {
             ...this.state,
             redirect: false,
             openModal: false,
-            fields: [],
-            firstname: null,
-            lastname: null,
-            email: null,
-            petname: null,
-            petcolor: null,
-            pettype: null,
-            petbirthdate: null,
-            photo_hash: null,
-            terms: false
+            errors: [],
+            firstname: '',
+            lastname: '',
+            email: '',
+            petname: '',
+            petcolor: '',
+            pettype: '',
+            petbirthdate: '',
+            photo_hash: '',
+            terms: 'false'
         }
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -130,13 +88,61 @@ class CreatePage extends BasePage {
         this.handleSelectPetType = this.handleSelectPetType.bind(this);
         this.handlePhotoChange = this.handlePhotoChange.bind(this);
         this.handleTerms = this.handleTerms.bind(this);
+
+        this.rules = {
+            firstname: {required: true, type: 'string', msg: 'Firstname is required'},
+            lastname: {required: true, type: 'string', msg: 'Lastname is required'},
+            email: {required: true, type: 'email', msg: 'email is required'},
+            petname: {required: true, type: 'string', msg: 'petname is required'},
+            petcolor: {required: true, type: 'string', msg: 'petcolor is required'},
+            pettype: {required: true, type: 'string', msg: 'pettype is required'},
+            petbirthdate: {required: true, type: 'date', msg: 'petbirthdate is required'},
+            photo_hash: {required: true, type: 'string', msg: 'photo is required'},
+            terms: {required: true, type: 'boolean', msg: 'terms must be accepted'}
+        }
+    }
+
+    validationData = () => {
+        let errors = [];
+        const data = this.state;
+        const rules = this.rules;
+        Object.keys(data).forEach(field => {
+            if (rules.hasOwnProperty(field)) {
+                let value = data[field];
+                if (rules[field].required) {
+                    switch (rules[field].type) {
+                        case 'email':
+                            break;
+                        case 'date':
+                            break;
+                        case 'boolean':
+                            if (value === 'false') {
+                                errors.push(rules[field].msg);
+                                alert('sdfsdf')
+                            }
+                            break
+                        default:
+                            if (validator.isEmpty(value)) {
+                                errors.push(rules[field].msg);
+                            }
+                    }
+                }
+            }
+        });
+        this.setState({errors: errors});
+        this.setState({openModal: errors.length === 0 ? true : false});
+        console.log(this.state);
     }
 
     handleSubmit(event) {
         event.preventDefault();
+        this.validationData();
+    }
 
+    /*
+    handleSubmit1(event) {
+        event.preventDefault();
         let fields = [];
-
         if (this.state.firstname === null || this.state.firstname === "") {
             fields.push("FirstName");
         }
@@ -169,6 +175,7 @@ class CreatePage extends BasePage {
         this.setState({openModal: fields.length === 0 ? true : false});
         console.log(this.state);
     }
+    */
 
     addToken = async () => {
         let self = this;
@@ -229,7 +236,8 @@ class CreatePage extends BasePage {
         }
         return (
             <Fragment>
-                <ValidationPopup isOpen={this.state.openModal} closeModal={this.closeModal} name={this.state.petname} kindpet={this.state.pettype} color={this.state.petcolor} birthdate={this.state.petbirthdate} photo={this.state.photo_hash} />
+                <ValidationPopup isOpen={this.state.openModal} closeModal={this.closeModal} name={this.state.petname} kindpet={this.state.pettype} color={this.state.petcolor}
+                                 birthdate={this.state.petbirthdate} photo={this.state.photo_hash}/>
                 <MDBContainer>
                     <h2 className="indigo-text font-weight-bold mt-2 mb-5"><MDBIcon far icon="edit"/> Create an ID for
                         your pet</h2>
@@ -320,7 +328,7 @@ class CreatePage extends BasePage {
                                 completed!</h4>
                             <div className="px-4">
                                 <p className="font-weight-bold mt-3 mb-1"><strong>Terms and conditions</strong></p>
-                                <MDBInput name="terms" value={this.state.firstname} getValue={this.handleTerms}
+                                <MDBInput name="terms" getValue={this.handleTerms}
                                           label="I agreee to the terms and conditions" type="checkbox" id="checkbox"
                                           autoFocus={this.calculateAutofocus(1)}/>
                                 <MDBInput label="I want to receive newsletter" type="checkbox" id="checkbox2"/>
@@ -329,7 +337,7 @@ class CreatePage extends BasePage {
                                     <MDBBtn outline color="success" onClick={this.handleSubmit}>submit</MDBBtn>
                                 </div>
                             </div>
-                            <ErrorMessage fields={this.state.fields}/>
+                            <ErrorMessage fields={this.state.errors}/>
                         </div>
                     </form>
                 </MDBContainer>
