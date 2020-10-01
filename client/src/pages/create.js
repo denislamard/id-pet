@@ -17,6 +17,7 @@ import {
     MDBTypography
 } from "mdbreact";
 import MDBFileupload from "mdb-react-fileupload";
+import ModalPage from './modal';
 
 
 /*
@@ -67,6 +68,7 @@ class CreatePage extends BasePage {
         this.state = {
             ...this.state,
             redirect: false,
+            isCall: false,
             firstname: null,
             lastname: null,
             email: null,
@@ -120,8 +122,20 @@ class CreatePage extends BasePage {
         }
 
         this.setState({fields: fields});
-        this.setState({redirect: fields.length === 0});
+        this.setState({isCall: fields.length === 0 ? true : false});
+        console.log(this.state);
     }
+
+    addToken = async () => {
+        let self = this;
+        const {account, contract} = this.state;
+
+        contract.methods.addPet(account).send({from: account})
+            .on('receipt', function (receipt) {
+                self.setState({tokenId: receipt.events.AddToken.returnValues.id});
+                //console.log(receipt.events.AddToken); //transactionHash
+            });
+    };
 
 
     handleChange(event) {
@@ -168,6 +182,7 @@ class CreatePage extends BasePage {
         }
         return (
             <Fragment>
+                <ModalPage isOpen={this.state.isCall}/>
                 <MDBContainer>
                     <h2 className="indigo-text font-weight-bold mt-2 mb-5"><MDBIcon far icon="edit"/> Create an ID for
                         your pet</h2>
