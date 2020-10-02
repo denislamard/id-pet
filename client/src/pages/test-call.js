@@ -94,9 +94,9 @@ class CallPage extends BasePage {
         let self = this;
         const {account, contract} = this.state;
 
-        const data =  await contract.methods.getPetInfo(account, 2).call({from: account});
+        const data =  await contract.methods.getPetInfo(account, 1).call({from: account});
         console.log(data);
-        alert(data.first_name);
+        alert(data.photo_hash);
     }
 
     render() {

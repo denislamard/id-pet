@@ -12,7 +12,7 @@ const ValidationPopup = (props) => {
                         <MDBRow>
                             <MDBCol md="1">
                                 <img
-                                    src={"https://ipfs.io/ipfs/".concat(props.data.photo)}
+                                    src={"https://ipfs.io/ipfs/".concat(props.data.photo)} //https://ipfs.io/ipfs/QmewBoTEvzYmgMN4r45z14X1AGjh8wqATi4Viqh3VmZgjc
                                     alt={"ipfs data store"}
                                     style={{width: "7em"}}/>
                             </MDBCol>
