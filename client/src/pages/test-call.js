@@ -29,6 +29,34 @@ class CallPage extends BasePage {
     }
     */
 
+/*
+{
+    "logIndex": 1,
+    "transactionIndex": 0,
+    "transactionHash": "0x92bc599773932f68a181db0b9c676f9188d711bf59c7ef6020f8f2e19c7e6b42",
+    "blockHash": "0x2d68a6bef01df08f051c9e1127b5a03c61e090d37c12d081e1cd6497910b1b26",
+    "blockNumber": 148,
+    "address": "0x27454DF0ef43C1825c2F597Ee6BfA4017DCFe329",
+    "type": "mined",
+    "id": "log_89df59b8",
+    "returnValues": {
+        "0": "41",
+        "id": "41"
+    },
+    "event": "AddToken",
+    "signature": "0x5bcb5fd4c92947f8a19c711dc5582f060ea564bec47e46cf4332095c3788cdac",
+    "raw": {
+        "data": "0x",
+        "topics": [
+            "0x5bcb5fd4c92947f8a19c711dc5582f060ea564bec47e46cf4332095c3788cdac",
+            "0x0000000000000000000000000000000000000000000000000000000000000029"
+        ]
+    }
+}
+
+ */
+
+
     handleSubmit = async (event) => {
         event.preventDefault();
         let self = this;
@@ -37,7 +65,12 @@ class CallPage extends BasePage {
         contract.methods.addPet(account).send({from: account})
             .on('receipt', function (receipt) {
                 self.setState({tokenId: receipt.events.AddToken.returnValues.id});
-                //console.log(receipt.events.AddToken); //transactionHash
+                const data = {
+                    transactionHash: receipt.events.AddToken.transactionHash,
+                    blockNumber:receipt.events.AddToken.blockNumber,
+                    id: receipt.events.AddToken.returnValues.id
+                }
+                console.log(data); //.events.AddToken); //transactionHash
             });
     };
 

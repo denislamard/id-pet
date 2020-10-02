@@ -2,7 +2,6 @@ import React, {Fragment} from "react";
 import {BasePage} from './base';
 import {Redirect} from 'react-router'
 import {
-    MDBAlert,
     MDBBtn,
     MDBCol,
     MDBContainer,
@@ -13,53 +12,12 @@ import {
     MDBSelect,
     MDBSelectInput,
     MDBSelectOption,
-    MDBSelectOptions,
-    MDBTypography
+    MDBSelectOptions
 } from "mdbreact";
 import MDBFileupload from "mdb-react-fileupload";
 import ValidationPopup from './modal';
 import {validationData} from "../utils/validation";
-
-
-/*
-
-var tifs = {1: 'Joe', 2: 'Jane'};
-...
-
-return (
-   <select id="tif" name="tif" onChange={this.handleChange}>
-      { Object.entries(tifs).map((t,k) => <option key={k} value={t[0]}>{t[1]}</option>) }
-   </select>
-)
-
-*/
-
-const ErrorMessage = (props) => {
-    const fields = props.fields;
-    return (
-        <div>
-            {fields.length > 0 &&
-            <MDBContainer className="mt-4">
-                <MDBAlert color="danger">
-                    <MDBTypography tag='h6' variant="h6">Submitting failed - {props.fields.length} field(s) must be corrected</MDBTypography>
-                    {
-                        fields.map((field) =>
-                            <MDBRow>
-                                <MDBCol size="1" className="ml-3">
-                                    <MDBIcon icon="exclamation-triangle" className="red-text"/>
-                                </MDBCol>
-                                <MDBCol xl="10" size="11">
-                                    <p className="red-text">{field}. Please complete this field</p>
-                                </MDBCol>
-                            </MDBRow>
-                        )
-                    }
-                </MDBAlert>
-            </MDBContainer>
-            }
-        </div>
-    );
-}
+import ErrorMessage from "../components/errors";
 
 class CreatePage extends BasePage {
 
@@ -70,9 +28,14 @@ class CreatePage extends BasePage {
             redirect: false,
             openModal: false,
             errors: [],
+            transactionInfo : {
+                transactionHash: null,
+                blockNumber: null,
+                id: null
+            },
             firstname: null,
             lastname: null,
-            email: null,
+            email: 'me@example.com',
             petname: null,
             petcolor: null,
             pettype: null,
@@ -84,7 +47,7 @@ class CreatePage extends BasePage {
         this.rules = {
             firstname: {required: true, type: 'string', msg: 'your firstname is required'},
             lastname: {required: true, type: 'string', msg: 'your lastname is required'},
-            email: {required: true, type: 'email', msg: 'your email is required'},
+            email: {required: true, type: 'email', msg: 'your email is required or is not valid'},
             petname: {required: true, type: 'string', msg: 'Name of your pet is required'},
             petcolor: {required: true, type: 'string', msg: 'Color of your pet is required'},
             pettype: {required: true, type: 'string', msg: 'Kind of your pet is required'},
@@ -107,7 +70,9 @@ class CreatePage extends BasePage {
 
         this.setState({errors: errors});
         this.setState({openModal: errors.length === 0 ? true : false});
-
+        if (errors.length === 0) {
+            this.addToken();
+        }
     }
 
     addToken = async () => {
@@ -117,7 +82,13 @@ class CreatePage extends BasePage {
         contract.methods.addPet(account).send({from: account})
             .on('receipt', function (receipt) {
                 self.setState({tokenId: receipt.events.AddToken.returnValues.id});
-                //console.log(receipt.events.AddToken); //transactionHash
+                const transactionInfo = {
+                    transactionHash: receipt.events.AddToken.transactionHash,
+                    blockNumber:receipt.events.AddToken.blockNumber,
+                    id: receipt.events.AddToken.returnValues.id
+                }
+                self.setState({transactionInfo: transactionInfo});
+                console.log(transactionInfo);
             });
     };
 
@@ -160,22 +131,23 @@ class CreatePage extends BasePage {
 
     closeModal = () => {
         this.setState({openModal: false});
+        this.setState({redirect: true});
     }
 
     render() {
         if (this.state.redirect === true) {
             return <Redirect to='/'/>;
         }
+        const data = {
+            name: this.state.petname,
+            type: this.state.pettype,
+            color: this.state.petcolor,
+            birthdate: this.state.petbirthdate,
+            photo: this.state.photo_hash
+        }
         return (
             <Fragment>
-                <ValidationPopup isOpen={this.state.openModal}
-                                 closeModal={this.closeModal}
-                                 callContract={this.addToken}
-                                 name={this.state.petname}
-                                 kindpet={this.state.pettype}
-                                 color={this.state.petcolor}
-                                 birthdate={this.state.petbirthdate}
-                                 photo={this.state.photo_hash}/>
+                <ValidationPopup isOpen={this.state.openModal} closeModal={this.closeModal} data={data} transactionInfo={this.state.transactionInfo}/>
                 <MDBContainer>
                     <h2 className="indigo-text font-weight-bold mt-2 mb-5"><MDBIcon far icon="edit"/> Create an ID for
                         your pet</h2>
@@ -275,7 +247,7 @@ class CreatePage extends BasePage {
                                     <MDBBtn outline color="success" onClick={this.handleSubmit}>submit</MDBBtn>
                                 </div>
                             </div>
-                            <ErrorMessage fields={this.state.errors}/>
+                            <ErrorMessage errors={this.state.errors}/>
                         </div>
                     </form>
                 </MDBContainer>

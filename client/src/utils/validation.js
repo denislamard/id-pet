@@ -13,13 +13,20 @@ export const validationData = (rules, data) => {
                         }
                         break;
                     case 'date':
-                        if (value === null  || !validator.isDate(value)) {
+                        if (value === null || !validator.isDate(value)) {
                             errors.push(rules[field].msg);
                         }
                         break;
                     case 'boolean':
-                        if (!validator.isBoolean(value) || value === 'false') {
-                            errors.push(rules[field].msg);
+                        if (typeof value === 'boolean') {
+                            if (!value) {
+                                errors.push(rules[field].msg);
+                            }
+                        }
+                        if (typeof value === 'string') {
+                            if (value === 'false') {
+                                errors.push(rules[field].msg);
+                            }
                         }
                         break
                     default:
