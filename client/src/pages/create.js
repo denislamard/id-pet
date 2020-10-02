@@ -18,7 +18,7 @@ import {
 } from "mdbreact";
 import MDBFileupload from "mdb-react-fileupload";
 import ValidationPopup from './modal';
-import validator from 'validator';
+import {validationData} from "../utils/validation";
 
 
 /*
@@ -41,7 +41,7 @@ const ErrorMessage = (props) => {
             {fields.length > 0 &&
             <MDBContainer className="mt-4">
                 <MDBAlert color="danger">
-                    <MDBTypography tag='h6' variant="h6">Submitting failed</MDBTypography>
+                    <MDBTypography tag='h6' variant="h6">Submitting failed - {props.fields.length} field(s) must be corrected</MDBTypography>
                     {
                         fields.map((field) =>
                             <MDBRow>
@@ -49,9 +49,7 @@ const ErrorMessage = (props) => {
                                     <MDBIcon icon="exclamation-triangle" className="red-text"/>
                                 </MDBCol>
                                 <MDBCol xl="10" size="11">
-                                    <p className="grey-text"><span className="red-text">{field}:</span> Please
-                                        complete
-                                        this field</p>
+                                    <p className="red-text">{field}. Please complete this field</p>
                                 </MDBCol>
                             </MDBRow>
                         )
@@ -72,110 +70,45 @@ class CreatePage extends BasePage {
             redirect: false,
             openModal: false,
             errors: [],
-            firstname: '',
-            lastname: '',
-            email: '',
-            petname: '',
-            petcolor: '',
-            pettype: '',
-            petbirthdate: '',
-            photo_hash: '',
+            firstname: null,
+            lastname: null,
+            email: null,
+            petname: null,
+            petcolor: null,
+            pettype: null,
+            petbirthdate: null,
+            photo_hash: null,
             terms: 'false'
         }
+
+        this.rules = {
+            firstname: {required: true, type: 'string', msg: 'your firstname is required'},
+            lastname: {required: true, type: 'string', msg: 'your lastname is required'},
+            email: {required: true, type: 'email', msg: 'your email is required'},
+            petname: {required: true, type: 'string', msg: 'Name of your pet is required'},
+            petcolor: {required: true, type: 'string', msg: 'Color of your pet is required'},
+            pettype: {required: true, type: 'string', msg: 'Kind of your pet is required'},
+            petbirthdate: {required: true, type: 'date', msg: 'Birthdate of your pet is required'},
+            photo_hash: {required: true, type: 'string', msg: 'Photo of your pet is required'},
+            terms: {required: true, type: 'boolean', msg: 'Terms must be accepted'}
+        }
+
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handlePetBirthdate = this.handlePetBirthdate.bind(this);
         this.handleSelectPetType = this.handleSelectPetType.bind(this);
         this.handlePhotoChange = this.handlePhotoChange.bind(this);
         this.handleTerms = this.handleTerms.bind(this);
-
-        this.rules = {
-            firstname: {required: true, type: 'string', msg: 'Firstname is required'},
-            lastname: {required: true, type: 'string', msg: 'Lastname is required'},
-            email: {required: true, type: 'email', msg: 'email is required'},
-            petname: {required: true, type: 'string', msg: 'petname is required'},
-            petcolor: {required: true, type: 'string', msg: 'petcolor is required'},
-            pettype: {required: true, type: 'string', msg: 'pettype is required'},
-            petbirthdate: {required: true, type: 'date', msg: 'petbirthdate is required'},
-            photo_hash: {required: true, type: 'string', msg: 'photo is required'},
-            terms: {required: true, type: 'boolean', msg: 'terms must be accepted'}
-        }
-    }
-
-    validationData = () => {
-        let errors = [];
-        const data = this.state;
-        const rules = this.rules;
-        Object.keys(data).forEach(field => {
-            if (rules.hasOwnProperty(field)) {
-                let value = data[field];
-                if (rules[field].required) {
-                    switch (rules[field].type) {
-                        case 'email':
-                            break;
-                        case 'date':
-                            break;
-                        case 'boolean':
-                            if (value === 'false') {
-                                errors.push(rules[field].msg);
-                                alert('sdfsdf')
-                            }
-                            break
-                        default:
-                            if (validator.isEmpty(value)) {
-                                errors.push(rules[field].msg);
-                            }
-                    }
-                }
-            }
-        });
-        this.setState({errors: errors});
-        this.setState({openModal: errors.length === 0 ? true : false});
-        console.log(this.state);
     }
 
     handleSubmit(event) {
         event.preventDefault();
-        this.validationData();
-    }
+        const errors = validationData(this.rules, this.state);
 
-    /*
-    handleSubmit1(event) {
-        event.preventDefault();
-        let fields = [];
-        if (this.state.firstname === null || this.state.firstname === "") {
-            fields.push("FirstName");
-        }
-        if (this.state.lastname === null || this.state.lastname === "") {
-            fields.push("Lastname");
-        }
-        if (this.state.email === null || this.state.email === "") {
-            fields.push("Email");
-        }
-        if (this.state.petname === null || this.state.petname === "") {
-            fields.push("Name of your pet");
-        }
-        if (this.state.petcolor === null || this.state.petcolor === "") {
-            fields.push("Color of your pet");
-        }
-        if (this.state.pettype === null || this.state.pettype === "") {
-            fields.push("kind of your pet");
-        }
-        if (this.state.petbirthdate === null || this.state.petbirthdate === "") {
-            fields.push("Birthdate of your pet");
-        }
-        if (this.state.photo_hash === null || this.state.photo_hash === "") {
-            fields.push("Photo of your pet");
-        }
-        if (this.state.terms === false) {
-            fields.push("Terms must be accepted");
-        }
+        this.setState({errors: errors});
+        this.setState({openModal: errors.length === 0 ? true : false});
 
-        this.setState({fields: fields});
-        this.setState({openModal: fields.length === 0 ? true : false});
-        console.log(this.state);
     }
-    */
 
     addToken = async () => {
         let self = this;
@@ -187,7 +120,6 @@ class CreatePage extends BasePage {
                 //console.log(receipt.events.AddToken); //transactionHash
             });
     };
-
 
     handleChange(event) {
         this.setState({[event.target.name]: event.target.value});
@@ -236,8 +168,14 @@ class CreatePage extends BasePage {
         }
         return (
             <Fragment>
-                <ValidationPopup isOpen={this.state.openModal} closeModal={this.closeModal} name={this.state.petname} kindpet={this.state.pettype} color={this.state.petcolor}
-                                 birthdate={this.state.petbirthdate} photo={this.state.photo_hash}/>
+                <ValidationPopup isOpen={this.state.openModal}
+                                 closeModal={this.closeModal}
+                                 callContract={this.addToken}
+                                 name={this.state.petname}
+                                 kindpet={this.state.pettype}
+                                 color={this.state.petcolor}
+                                 birthdate={this.state.petbirthdate}
+                                 photo={this.state.photo_hash}/>
                 <MDBContainer>
                     <h2 className="indigo-text font-weight-bold mt-2 mb-5"><MDBIcon far icon="edit"/> Create an ID for
                         your pet</h2>
