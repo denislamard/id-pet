@@ -75,11 +75,24 @@ class CreatePage extends BasePage {
         }
     }
 
+    InfoPet()  {
+        return {
+            first_name: this.state.firstname,
+            last_name: this.state.lastname,
+            email: this.state.email,
+            name_pet: this.state.petname,
+            type_pet: this.state.pettype,
+            color_pet: this.state.petcolor,
+            birthdate_pet: this.state.petbirthdate,
+            photo_hash: this.state.photo_hash
+        }
+    }
+
     addToken = async () => {
         let self = this;
         const {account, contract} = this.state;
 
-        contract.methods.addPet(account).send({from: account})
+        contract.methods.addPet(account, this.InfoPet()).send({from: account})
             .on('receipt', function (receipt) {
                 self.setState({tokenId: receipt.events.AddToken.returnValues.id});
                 const transactionInfo = {
@@ -138,16 +151,10 @@ class CreatePage extends BasePage {
         if (this.state.redirect === true) {
             return <Redirect to='/'/>;
         }
-        const data = {
-            name: this.state.petname,
-            type: this.state.pettype,
-            color: this.state.petcolor,
-            birthdate: this.state.petbirthdate,
-            photo: this.state.photo_hash
-        }
+
         return (
             <Fragment>
-                <ValidationPopup isOpen={this.state.openModal} closeModal={this.closeModal} data={data} transactionInfo={this.state.transactionInfo}/>
+                <ValidationPopup isOpen={this.state.openModal} closeModal={this.closeModal} data={this.InfoPet()} transactionInfo={this.state.transactionInfo}/>
                 <MDBContainer>
                     <h2 className="indigo-text font-weight-bold mt-2 mb-5"><MDBIcon far icon="edit"/> Create an ID for
                         your pet</h2>

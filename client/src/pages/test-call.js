@@ -62,7 +62,22 @@ class CallPage extends BasePage {
         let self = this;
         const {account, contract} = this.state;
 
-        contract.methods.addPet(account).send({from: account})
+        console.log(this.state);
+
+        const data = {
+            first_name: "Denis",
+            last_name: "sdkljsdfj",
+            email: "sdkljsdfj",
+            name_pet: "sdkljsdfj",
+            type_pet: "sdkljsdfj",
+            color_pet: "dsfdsfkj",
+            birthdate_pet: "sdkljsdfj",
+            photo_hash: "sdkljsdfj"
+        }
+
+
+
+        contract.methods.addPet(account, data).send({from: account})
             .on('receipt', function (receipt) {
                 self.setState({tokenId: receipt.events.AddToken.returnValues.id});
                 const data = {
@@ -70,15 +85,26 @@ class CallPage extends BasePage {
                     blockNumber:receipt.events.AddToken.blockNumber,
                     id: receipt.events.AddToken.returnValues.id
                 }
-                console.log(data); //.events.AddToken); //transactionHash
+                console.log(receipt); //.events.AddToken); //transactionHash
             });
     };
+
+    handleData = async (event) => {
+        event.preventDefault();
+        let self = this;
+        const {account, contract} = this.state;
+
+        const data =  await contract.methods.getPetInfo(account, 2).call({from: account});
+        console.log(data);
+        alert(data.first_name);
+    }
 
     render() {
         return (
             <MDBContainer>
                 <p>{this.state.contract._address}</p>
                 <MDBBtn onClick={this.handleSubmit}>call</MDBBtn>
+                <MDBBtn onClick={this.handleData}>data</MDBBtn>
                 <div>
                     {this.state.tokenId > 0 &&
                         <MDBBadge color="success">Token Id = {this.state.tokenId}</MDBBadge>

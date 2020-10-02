@@ -1,8 +1,7 @@
 import React, {Fragment} from 'react';
 import {BasePage} from './base';
 import {useHistory} from "react-router-dom";
-import {MDBBtn, MDBCard, MDBLink, MDBCardBody, MDBCardImage, MDBCardText, MDBCol, MDBContainer, MDBRow} from "mdbreact";
-
+import {MDBBtn, MDBCard, MDBLink, MDBCardBody, MDBCardImage, MDBCol, MDBContainer, MDBRow} from "mdbreact";
 
 function CardMenu(props) {
     let history = useHistory();
@@ -23,10 +22,6 @@ function CardMenu(props) {
                 />
             </MDBLink>
             <MDBCardBody>
-                <MDBCardText className={"text-justify"}>
-                    Some quick example text to build on the card title and make up the
-                    bulk of the card&apos;s content.
-                </MDBCardText>
                 <div className={"text-center"}>
                     <MDBBtn color="primary" onClick={handleClick} outline>{props.action}</MDBBtn>
                 </div>
@@ -35,13 +30,12 @@ function CardMenu(props) {
     )
 }
 
-
 class MainPage extends BasePage {
 
     render() {
         return (
             <Fragment>
-                <MDBContainer className={"my-5"}>
+                <MDBContainer className={"my-4"}>
                     <MDBRow center>
                         <MDBCol sm="4">
                             <CardMenu action={"Create An ID"} image={"assets/m1.jpeg"} url={"/create"}/>
@@ -50,7 +44,7 @@ class MainPage extends BasePage {
                             <CardMenu action={"Find a pet"} image={"assets/find-pet.jpg"} url={"/find"}/>
                         </MDBCol>
                     </MDBRow>
-                    <MDBRow center className={"mt-5"}>
+                    <MDBRow center className={"mt-4"}>
                         <MDBCol sm="4">
                             <CardMenu action={"List all Ids"} image={"assets/m3.jpg"} url={"/list"}/>
                         </MDBCol>

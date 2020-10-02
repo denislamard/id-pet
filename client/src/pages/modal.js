@@ -2,7 +2,7 @@ import React from 'react';
 import {MDBBtn, MDBCol, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBRow, MDBSpinner} from 'mdbreact';
 
 const ValidationPopup = (props) => {
-    const birthdate = props.data.birthdate !== null ? props.data.birthdate.toLocaleString().substring(1, 10) : null;
+    const birthdate = props.data.birthdate_pet !== null ? props.data.birthdate_pet.toLocaleString().substring(1, 10) : null;
     return (
         <MDBContainer>
             <MDBModal size="lg" isOpen={props.isOpen}>
@@ -17,10 +17,10 @@ const ValidationPopup = (props) => {
                                     style={{width: "7em"}}/>
                             </MDBCol>
                             <MDBCol md="8" className="ml-auto">
-                                <p className="py-0 my-1">Name: <strong>{props.data.name}</strong></p>
-                                <p className="py-0  my-1">Type: <strong>{props.data.type}</strong></p>
+                                <p className="py-0 my-1">Name: <strong>{props.data.name_pet}</strong></p>
+                                <p className="py-0  my-1">Type: <strong>{props.data.type_pet}</strong></p>
                                 <p className="py-0  my-1">Birthdate :<strong>{birthdate}</strong></p>
-                                <p className="py-0  my-1">Color: <strong>{props.data.color}</strong></p>
+                                <p className="py-0  my-1">Color: <strong>{props.data.color_pet}</strong></p>
 
                             </MDBCol>
                         </MDBRow>
@@ -51,6 +51,5 @@ const ValidationPopup = (props) => {
         </MDBContainer>
     );
 }
-
 
 export default ValidationPopup;
