@@ -18,6 +18,7 @@ import MDBFileupload from "mdb-react-fileupload";
 import ValidationPopup from './modal';
 import {validationData} from "../utils/validation";
 import ErrorMessage from "../components/errors";
+import dateFormat from 'dateformat'
 
 class CreatePage extends BasePage {
 
@@ -35,7 +36,7 @@ class CreatePage extends BasePage {
             },
             firstname: null,
             lastname: null,
-            email: 'me@example.com',
+            email: null,
             petname: null,
             petcolor: null,
             pettype: null,
@@ -70,6 +71,8 @@ class CreatePage extends BasePage {
 
         this.setState({errors: errors});
         this.setState({openModal: errors.length === 0 ? true : false});
+        console.log('********************************');
+        console.log(this.state);
         if (errors.length === 0) {
             this.addToken();
         }
@@ -83,7 +86,7 @@ class CreatePage extends BasePage {
             name_pet: this.state.petname,
             type_pet: this.state.pettype,
             color_pet: this.state.petcolor,
-            birthdate_pet: this.state.petbirthdate,
+            birthdate_pet: dateFormat(this.state.petbirthdate, "dd/mm/yyyy"),
             photo_hash: this.state.photo_hash
         }
     }

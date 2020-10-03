@@ -9,7 +9,7 @@ const Header = (props) => {
                     <a href={"/"}><img src="assets/pets.png" className="pt-2" alt="logo" style={{width: '100%'}}/></a>
                     <MDBTooltip domElement tag="p"  placement="bottom">
                         <p className={"text-center indigo-text align-middle p-1"}
-                           style={{fontSize: "0.85em", borderStyle: "solid", borderWidth: "thin", borderColor: "#bdbdbd"}}>
+                           style={{fontSize: "0.80em", borderStyle: "solid", borderWidth: "thin", borderColor: "#bdbdbd"}}>
                             <a target="_blank" rel="noopener noreferrer" href={'https://goerli.etherscan.io/address/' + props.account}> <img src="assets/etherscan.png"
                                                                                                                                              alt="etherscan"
                                                                                                                                              style={{width: '16px'}}/> {props.account}

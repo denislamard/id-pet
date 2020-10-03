@@ -38,24 +38,25 @@ contract Token is ERC721, Ownable {
 
     Counters.Counter private _petIds;
 
-    constructor(string memory baseURI)
-        public
-        ERC721("Unique Pet Id Tag", "UPIT")
+    constructor(string memory baseURI) public ERC721("Unique Pet Id Tag", "UPIT")
     {
         _setBaseURI(baseURI);
     }
 
-    function addPet(address owner, PetInfo memory info) public payable {
+    function addPet(address PetOwner, PetInfo memory info) public payable {
         _petIds.increment();
         uint256 Id = _petIds.current();
-        _mint(owner, Id);
+        _mint(PetOwner, Id);
         _setTokenURI(Id, Id.toString());
         _list_pets[Id] = info;
         AddToken(Id);
     }
 
 
-    function getPetInfo(address owner, uint256 id) public view returns (PetInfo memory info) {
-        return _list_pets[id];
+    function getPetInfo(address PetOwner, uint256 id) public view returns (PetInfo memory info) {
+        require(_exists(id), "token ID not exist");
+        require(ownerOf(id) == PetOwner && (msg.sender == owner() || msg.sender == PetOwner), 'the owner is not the given address');
+        info = _list_pets[id];
+        return info;
     }
 }
