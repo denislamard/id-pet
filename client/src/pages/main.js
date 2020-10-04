@@ -38,10 +38,10 @@ class MainPage extends BasePage {
                 <MDBContainer className={"my-4"}>
                     <MDBRow center>
                         <MDBCol sm="4">
-                            <CardMenu action={"Create An ID"} image={"assets/m1.jpeg"} url={"/create"}/>
+                            <CardMenu action={"Register a pet"} image={"assets/m1.jpeg"} url={"/create"}/>
                         </MDBCol>
                         <MDBCol sm="4">
-                            <CardMenu action={"List all Ids"} image={"assets/m3.jpg"} url={"/list"}/>
+                            <CardMenu action={"List of pets"} image={"assets/m3.jpg"} url={"/list"}/>
                         </MDBCol>
                     </MDBRow>
                     <MDBRow center className={"mt-4"}>
@@ -49,7 +49,7 @@ class MainPage extends BasePage {
                             <CardMenu action={"Find a pet"} image={"assets/find-pet.jpg"} url={"/find"}/>
                         </MDBCol>
                         <MDBCol sm="4">
-                            <CardMenu action={"Change owner"} image={"assets/m4.jpg"} url={"/change"}/>
+                            <CardMenu action={"Change the owner"} image={"assets/m4.jpg"} url={"/change"}/>
                         </MDBCol>
                     </MDBRow>
                 </MDBContainer>

@@ -1,8 +1,8 @@
 import React, {Fragment} from "react";
 import {Redirect} from 'react-router'
 import {BasePage} from './base';
-import {MDBBtn, MDBCard, MDBCardBody, MDBCardHeader, MDBContainer, MDBIcon, MDBPopover, MDBPopoverBody, MDBTable, MDBTableBody, MDBTableHead} from 'mdbreact';
-import { PhotoPopup } from '../components/modal';
+import {MDBBtn, MDBCard, MDBCardBody, MDBCardHeader, MDBContainer, MDBIcon, MDBTable, MDBTableBody, MDBTableHead} from 'mdbreact';
+import {PhotoPopup} from '../components/modal';
 
 const columnsInfo = [
     {
@@ -32,18 +32,6 @@ const columnsInfo = [
     }
 ];
 
-const ImagePopOver = (props) => {
-    return (
-        <MDBPopover placement="top" popover clickable>
-            <img src={"https://ipfs.io/ipfs/".concat(props.data.photo_hash)} width="35px" alt={props.data.name_pet}/>
-            <div>
-                <MDBPopoverBody>
-                    <a href="#" onClick={props.showPhoto(1)}><img src={"https://ipfs.io/ipfs/".concat(props.data.photo_hash)} width="300px"/></a>
-                </MDBPopoverBody>
-            </div>
-        </MDBPopover>
-    );
-}
 
 class ListPage extends BasePage {
 
@@ -61,6 +49,10 @@ class ListPage extends BasePage {
         this.closeModal = this.closeModal.bind(this);
     }
 
+    componentDidMount() {
+        this.makeListPets();
+    }
+
     handleClose(event) {
         this.setState({redirect: true});
     }
@@ -72,8 +64,8 @@ class ListPage extends BasePage {
             name: data.name_pet,
             type: data.type_pet,
             color: data.color_pet,
-            //photo: <ImagePopOver data={data} />
-            photo: <a href="#" onClick={(e) => this.openModal(data.photo_hash, data.name_pet, e)}><img src={"https://ipfs.io/ipfs/".concat(data.photo_hash)} width="35px" alt={data.name_pet}/></a>
+            photo: <MDBBtn flat onClick={(e) => this.openModal(data.photo_hash, data.name_pet, e)}><img src={"https://ipfs.io/ipfs/".concat(data.photo_hash)} width="40px"
+                                                                                                        alt={data.name_pet}/></MDBBtn>
         });
     }
 
@@ -110,7 +102,6 @@ class ListPage extends BasePage {
         if (this.state.redirect === true) {
             return <Redirect to='/'/>;
         }
-        this.makeListPets();
         return (
             <Fragment>
                 <MDBContainer>
