@@ -52,4 +52,27 @@ const ValidationPopup = (props) => {
     );
 }
 
+export const PhotoPopup = (props) => {
+    console.log(props);
+    return(
+        <MDBContainer>
+            <MDBModal isOpen={props.isOpen} side position="top-right">
+                <MDBModalHeader toggle={props.isOpen}>{props.name}</MDBModalHeader>
+                <MDBModalBody>
+                    <div className="text-center">
+                    <img
+                        src={"https://ipfs.io/ipfs/".concat(props.photo_hash)} //https://ipfs.io/ipfs/QmRTGppwz2kRBB6vwfnmpYcATNWPgCZH6wrbbU1ruFjiQT
+                        alt={"ipfs data store"}
+                        style={{width: "22em"}}/>
+                    </div>
+                </MDBModalBody>
+                <MDBModalFooter>
+                    <MDBBtn outline color="success" onClick={props.closeModal}>Close</MDBBtn>
+                </MDBModalFooter>
+            </MDBModal>
+        </MDBContainer>
+    );
+}
+
+
 export default ValidationPopup;

@@ -1,8 +1,8 @@
 import React, {Fragment} from "react";
 import {Redirect} from 'react-router'
 import {BasePage} from './base';
-import {MDBBtn, MDBCard, MDBCardBody, MDBCardHeader, MDBContainer, MDBIcon, MDBPopover, MDBTable, MDBTableBody, MDBTableHead, MDBPopoverBody} from 'mdbreact';
-
+import {MDBBtn, MDBCard, MDBCardBody, MDBCardHeader, MDBContainer, MDBIcon, MDBPopover, MDBPopoverBody, MDBTable, MDBTableBody, MDBTableHead} from 'mdbreact';
+import { PhotoPopup } from '../components/modal';
 
 const columnsInfo = [
     {
@@ -38,7 +38,7 @@ const ImagePopOver = (props) => {
             <img src={"https://ipfs.io/ipfs/".concat(props.data.photo_hash)} width="35px" alt={props.data.name_pet}/>
             <div>
                 <MDBPopoverBody>
-                    <img src={"https://ipfs.io/ipfs/".concat(props.data.photo_hash)} width="300px"/>
+                    <a href="#" onClick={props.showPhoto(1)}><img src={"https://ipfs.io/ipfs/".concat(props.data.photo_hash)} width="300px"/></a>
                 </MDBPopoverBody>
             </div>
         </MDBPopover>
@@ -52,9 +52,13 @@ class ListPage extends BasePage {
         this.state = {
             ...this.state,
             redirect: false,
+            openModal: false,
+            photo_hash: null,
+            name: null,
             list: []
         }
         this.handleClose = this.handleClose.bind(this);
+        this.closeModal = this.closeModal.bind(this);
     }
 
     handleClose(event) {
@@ -69,7 +73,7 @@ class ListPage extends BasePage {
             type: data.type_pet,
             color: data.color_pet,
             //photo: <ImagePopOver data={data} />
-            photo: <img src={"https://ipfs.io/ipfs/".concat(data.photo_hash)} width="35px" alt={data.name_pet}/>
+            photo: <a href="#" onClick={(e) => this.openModal(data.photo_hash, data.name_pet, e)}><img src={"https://ipfs.io/ipfs/".concat(data.photo_hash)} width="35px" alt={data.name_pet}/></a>
         });
     }
 
@@ -94,6 +98,14 @@ class ListPage extends BasePage {
         this.setState({list: list});
     }
 
+    closeModal = (event) => {
+        this.setState({openModal: false});
+    }
+
+    openModal = (urlPhoto, name, e) => {
+        this.setState({openModal: true, photo_hash: urlPhoto, name: name});
+    }
+
     render() {
         if (this.state.redirect === true) {
             return <Redirect to='/'/>;
@@ -102,16 +114,24 @@ class ListPage extends BasePage {
         return (
             <Fragment>
                 <MDBContainer>
+                    <PhotoPopup isOpen={this.state.openModal} photo_hash={this.state.photo_hash} name={this.state.name} closeModal={this.closeModal}/>
                     <h2 className="indigo-text font-weight-bold mt-2 mb-5"><MDBIcon icon="list"/> List of pets</h2>
                     <MDBCard narrow>
                         <MDBCardHeader className="view view-cascade gradient-card-header blue-gradient d-flex align-items-center py-3 mx-4 mb-1">
                             Pets for {this.state.account}
                         </MDBCardHeader>
                         <MDBCardBody cascade>
+                            {this.state.list.length === 0 &&
+                            <div className={"text-center grey-text align-middle p-1"}>
+                                <p style={{fontSize: "0.90em"}}>No pets already registered</p>
+                            </div>
+                            }
+                            {this.state.list.length > 0 &&
                             <MDBTable btn fixed>
                                 <MDBTableHead columns={columnsInfo}/>
                                 <MDBTableBody rows={this.state.list}/>
                             </MDBTable>
+                            }
                         </MDBCardBody>
                     </MDBCard>
                     <div className="text-right mt-2">
