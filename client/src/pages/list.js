@@ -1,7 +1,8 @@
 import React, {Fragment} from "react";
 import {Redirect} from 'react-router'
 import {BasePage} from './base';
-import {MDBBtn, MDBCard, MDBCardBody, MDBCardHeader, MDBContainer, MDBIcon, MDBTable, MDBTableBody, MDBTableHead} from 'mdbreact';
+import {MDBBtn, MDBCard, MDBCardBody, MDBCardHeader, MDBContainer, MDBIcon, MDBPopover, MDBTable, MDBTableBody, MDBTableHead, MDBPopoverBody} from 'mdbreact';
+
 
 const columnsInfo = [
     {
@@ -29,8 +30,20 @@ const columnsInfo = [
         'field': 'photo',
         'sort': 'asc'
     }
-
 ];
+
+const ImagePopOver = (props) => {
+    return (
+        <MDBPopover placement="top" popover clickable>
+            <img src={"https://ipfs.io/ipfs/".concat(props.data.photo_hash)} width="35px" alt={props.data.name_pet}/>
+            <div>
+                <MDBPopoverBody>
+                    <img src={"https://ipfs.io/ipfs/".concat(props.data.photo_hash)} width="300px"/>
+                </MDBPopoverBody>
+            </div>
+        </MDBPopover>
+    );
+}
 
 class ListPage extends BasePage {
 
@@ -55,6 +68,7 @@ class ListPage extends BasePage {
             name: data.name_pet,
             type: data.type_pet,
             color: data.color_pet,
+            //photo: <ImagePopOver data={data} />
             photo: <img src={"https://ipfs.io/ipfs/".concat(data.photo_hash)} width="35px" alt={data.name_pet}/>
         });
     }

@@ -15,7 +15,7 @@ import {
     MDBSelectOptions
 } from "mdbreact";
 import MDBFileupload from "mdb-react-fileupload";
-import ValidationPopup from './modal';
+import ValidationPopup from '../components/modal';
 import {validationData} from "../utils/validation";
 import ErrorMessage from "../components/errors";
 import dateFormat from 'dateformat'
