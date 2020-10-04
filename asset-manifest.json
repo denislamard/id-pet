@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.css": "/pet/static/css/main.79f1da79.chunk.css",
+    "main.js": "/pet/static/js/main.6f9bddbf.chunk.js",
+    "main.js.map": "/pet/static/js/main.6f9bddbf.chunk.js.map",
+    "runtime-main.js": "/pet/static/js/runtime-main.75ab69dd.js",
+    "runtime-main.js.map": "/pet/static/js/runtime-main.75ab69dd.js.map",
+    "static/css/2.dc5c1073.chunk.css": "/pet/static/css/2.dc5c1073.chunk.css",
+    "static/js/2.d16dfd0f.chunk.js": "/pet/static/js/2.d16dfd0f.chunk.js",
+    "static/js/2.d16dfd0f.chunk.js.map": "/pet/static/js/2.d16dfd0f.chunk.js.map",
+    "index.html": "/pet/index.html",
+    "precache-manifest.bbe424348a81c68375263a7d5bd15d47.js": "/pet/precache-manifest.bbe424348a81c68375263a7d5bd15d47.js",
+    "service-worker.js": "/pet/service-worker.js",
+    "static/css/2.dc5c1073.chunk.css.map": "/pet/static/css/2.dc5c1073.chunk.css.map",
+    "static/css/main.79f1da79.chunk.css.map": "/pet/static/css/main.79f1da79.chunk.css.map",
+    "static/js/2.d16dfd0f.chunk.js.LICENSE.txt": "/pet/static/js/2.d16dfd0f.chunk.js.LICENSE.txt",
+    "static/media/mdb.css": "/pet/static/media/default-skin.b257fa9c.svg",
+    "static/media/all.min.css": "/pet/static/media/fa-solid-900.8e39d5d5.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.75ab69dd.js",
+    "static/css/2.dc5c1073.chunk.css",
+    "static/js/2.d16dfd0f.chunk.js",
+    "static/css/main.79f1da79.chunk.css",
+    "static/js/main.6f9bddbf.chunk.js"
+  ]
+}
