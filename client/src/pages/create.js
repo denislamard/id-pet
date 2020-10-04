@@ -58,6 +58,8 @@ class CreatePage extends BasePage {
         }
 
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleClose = this.handleClose.bind(this);
+
         this.handleChange = this.handleChange.bind(this);
         this.handlePetBirthdate = this.handlePetBirthdate.bind(this);
         this.handleSelectPetType = this.handleSelectPetType.bind(this);
@@ -71,11 +73,13 @@ class CreatePage extends BasePage {
 
         this.setState({errors: errors});
         this.setState({openModal: errors.length === 0 ? true : false});
-        console.log('********************************');
-        console.log(this.state);
         if (errors.length === 0) {
             this.addToken();
         }
+    }
+
+    handleClose(event) {
+        this.setState({redirect: true});
     }
 
     InfoPet()  {
@@ -104,7 +108,6 @@ class CreatePage extends BasePage {
                     id: receipt.events.AddToken.returnValues.id
                 }
                 self.setState({transactionInfo: transactionInfo});
-                console.log(transactionInfo);
             });
     };
 
@@ -237,8 +240,8 @@ class CreatePage extends BasePage {
                                     ref={fileupload => this.fileupload = fileupload}
                                     maxFileSize="1M"
                                     allowedFileExtensions={['jpg', 'png', 'bmp']}
-                                    containerHeight={500}
-                                    maxHeight={500}
+                                    containerHeight={600}
+                                    maxHeight={1500}
                                     errorMaxHeight="Your photo must not have more than 500 pixels height"
                                     errorFileSize="The size of your photo is too big"
                                     errorFileExtension="The type of your photo is not allowed"
@@ -253,7 +256,7 @@ class CreatePage extends BasePage {
                                           autoFocus={this.calculateAutofocus(1)}/>
                                 <MDBInput label="I want to receive newsletter" type="checkbox" id="checkbox2"/>
                                 <div className="text-right mt-2">
-                                    <MDBBtn outline color="grey">cancel</MDBBtn>
+                                    <MDBBtn outline color="grey" onClick={this.handleClose}>cancel</MDBBtn>
                                     <MDBBtn outline color="success" onClick={this.handleSubmit}>submit</MDBBtn>
                                 </div>
                             </div>
