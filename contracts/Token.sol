@@ -55,7 +55,8 @@ contract Token is ERC721, Ownable {
 
     function getPetInfo(address PetOwner, uint256 id) public view returns (PetInfo memory info) {
         require(_exists(id), "token ID not exist");
-        require(ownerOf(id) == PetOwner && (msg.sender == owner() || msg.sender == PetOwner), 'the owner is not the given address');
+        //require(ownerOf(id) == PetOwner || (msg.sender == owner() || msg.sender == PetOwner), 'the owner is not the given address');
+        require(ownerOf(id) == PetOwner || msg.sender == owner(), 'the owner is not the given address');
         info = _list_pets[id];
         return info;
     }
