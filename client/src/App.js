@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import {BrowserRouter as Router, Route, Switch, HashRouter} from "react-router-dom";
 
 import MainPage from "./pages/main";
 import CreatePage from "./pages/create";
@@ -73,7 +73,7 @@ class App extends Component {
             <Fragment>
                 <Title name={"PetID"} version={"1.0.0"}/>
                 <Header account={this.state.account} balance={this.state.balance}/>
-                <Router>
+                <HashRouter basename="/">
                     <Switch>
                         <Route path="/" exact>
                             <MainPage web3={this.state.web3} account={this.state.account} contract={this.state.contract} ipfs={this.state.ipfs}/>
@@ -99,7 +99,7 @@ class App extends Component {
 
                         <Route path="*" component={NotFoundPage}/>
                     </Switch>
-                </Router>
+                </HashRouter>
                 <Footer/>
             </Fragment>
         );
