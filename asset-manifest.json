@@ -1,27 +1,27 @@
 {
   "files": {
     "main.css": "/id-pet/static/css/main.79f1da79.chunk.css",
-    "main.js": "/id-pet/static/js/main.4f6ab27e.chunk.js",
-    "main.js.map": "/id-pet/static/js/main.4f6ab27e.chunk.js.map",
+    "main.js": "/id-pet/static/js/main.a2915bff.chunk.js",
+    "main.js.map": "/id-pet/static/js/main.a2915bff.chunk.js.map",
     "runtime-main.js": "/id-pet/static/js/runtime-main.b52bd51d.js",
     "runtime-main.js.map": "/id-pet/static/js/runtime-main.b52bd51d.js.map",
-    "static/css/2.7165108f.chunk.css": "/id-pet/static/css/2.7165108f.chunk.css",
-    "static/js/2.59b24daa.chunk.js": "/id-pet/static/js/2.59b24daa.chunk.js",
-    "static/js/2.59b24daa.chunk.js.map": "/id-pet/static/js/2.59b24daa.chunk.js.map",
+    "static/css/2.63cff18b.chunk.css": "/id-pet/static/css/2.63cff18b.chunk.css",
+    "static/js/2.5ea60711.chunk.js": "/id-pet/static/js/2.5ea60711.chunk.js",
+    "static/js/2.5ea60711.chunk.js.map": "/id-pet/static/js/2.5ea60711.chunk.js.map",
     "index.html": "/id-pet/index.html",
-    "precache-manifest.4f502ddd03e14fb446fa9d3f53c6461b.js": "/id-pet/precache-manifest.4f502ddd03e14fb446fa9d3f53c6461b.js",
+    "precache-manifest.74b70575a19c2b95c502e2549afe062e.js": "/id-pet/precache-manifest.74b70575a19c2b95c502e2549afe062e.js",
     "service-worker.js": "/id-pet/service-worker.js",
-    "static/css/2.7165108f.chunk.css.map": "/id-pet/static/css/2.7165108f.chunk.css.map",
+    "static/css/2.63cff18b.chunk.css.map": "/id-pet/static/css/2.63cff18b.chunk.css.map",
     "static/css/main.79f1da79.chunk.css.map": "/id-pet/static/css/main.79f1da79.chunk.css.map",
-    "static/js/2.59b24daa.chunk.js.LICENSE.txt": "/id-pet/static/js/2.59b24daa.chunk.js.LICENSE.txt",
+    "static/js/2.5ea60711.chunk.js.LICENSE.txt": "/id-pet/static/js/2.5ea60711.chunk.js.LICENSE.txt",
     "static/media/mdb.css": "/id-pet/static/media/default-skin.b257fa9c.svg",
-    "static/media/all.min.css": "/id-pet/static/media/fa-solid-900.8e39d5d5.svg"
+    "static/media/all.min.css": "/id-pet/static/media/fa-solid-900.ee09ad75.woff"
   },
   "entrypoints": [
     "static/js/runtime-main.b52bd51d.js",
-    "static/css/2.7165108f.chunk.css",
-    "static/js/2.59b24daa.chunk.js",
+    "static/css/2.63cff18b.chunk.css",
+    "static/js/2.5ea60711.chunk.js",
     "static/css/main.79f1da79.chunk.css",
-    "static/js/main.4f6ab27e.chunk.js"
+    "static/js/main.a2915bff.chunk.js"
   ]
 }
