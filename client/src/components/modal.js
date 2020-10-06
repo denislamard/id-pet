@@ -53,7 +53,6 @@ const ValidationPopup = (props) => {
 }
 
 export const PhotoPopup = (props) => {
-    console.log(props);
     return (
         <MDBContainer>
             <MDBModal isOpen={props.isOpen} side position="top-right">

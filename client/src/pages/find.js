@@ -1,10 +1,54 @@
 import React, {Fragment} from "react";
 import {Redirect} from 'react-router'
-import {MDBBtn, MDBCol, MDBContainer, MDBIcon, MDBInput, MDBRow, MDBView} from 'mdbreact';
+import {MDBBtn, MDBCol, MDBContainer, MDBIcon, MDBInput, MDBRow, MDBView, MDBCard, MDBCardImage, MDBCardBody, MDBCardTitle} from 'mdbreact';
 import {BasePage} from './base';
 import {validationData} from "../utils/validation";
 import ErrorMessage from "../components/errors";
-import dateFormat from "dateformat";
+
+
+const ItemPet = (props) => {
+    return (
+        <MDBRow className="ml-2">
+            <MDBCol sm="3">
+                <span className="grey-text">{props.label}:</span>
+            </MDBCol>
+            <MDBCol sm="9">
+                <strong>{props.value}</strong>
+            </MDBCol>
+        </MDBRow>
+    );
+}
+
+const CardPet = (props) => {
+    console.log(props);
+    return (
+        <MDBCard wide cascade>
+            <MDBView cascade>
+                <MDBCardImage
+                    hover
+                    overlay='white-slight'
+                    className='card-img-top'
+                    src={"https://ipfs.io/ipfs/".concat(props.infoPet.photo_hash)}
+                    alt='Card cap'
+                />
+            </MDBView>
+            <MDBCardBody cascade className='text-center mb-3'>
+                <MDBCardTitle className='card-title indigo-text h2'>
+                    <strong>{props.infoPet.name_pet}</strong>
+                </MDBCardTitle>
+                <div className="text-left mt-4">
+                    <h5 className="indigo-text"><MDBIcon icon="user"/> You</h5>
+                    <ItemPet label="Name" value={props.infoPet.first_name}/>
+                    <ItemPet label="Email" value={props.infoPet.email}/>
+                    <h5 className="indigo-text mt-4"><MDBIcon icon="cat"/> Your lovely pet</h5>
+                    <ItemPet label="kind of pet" value={props.infoPet.type_pet}/>
+                    <ItemPet label="Birthdate" value={props.infoPet.birthdate_pet}/>
+                    <ItemPet label="Color" value={props.infoPet.color_pet}/>
+                </div>
+            </MDBCardBody>
+        </MDBCard>
+    );
+}
 
 
 class FindPage extends BasePage {
@@ -85,55 +129,9 @@ class FindPage extends BasePage {
                         <MDBCol sm="12" className="mt-5">
                             {this.state.infoPet !== null &&
                             <MDBContainer>
-                                <MDBRow>
-                                    <MDBCol sm="4">
-                                        <div className="text-center">
-                                            <img src={"https://ipfs.io/ipfs/".concat(this.state.infoPet.photo_hash)} style={{width: "200px"}} alt="" className="img-fluid"/>
-                                        </div>
-                                    </MDBCol>
-                                    <MDBCol sm="8">
-                                        <h5 className="indigo-text"><MDBIcon icon="user"/> You</h5>
-                                        <MDBRow className="ml-2">
-                                            <MDBCol sm="2">
-                                                <span className="grey-text">name:</span>
-                                            </MDBCol>
-                                            <MDBCol sm="10">
-                                                <strong>{this.state.infoPet.first_name} {this.state.infoPet.last_name}</strong>
-                                            </MDBCol>
-                                        </MDBRow>
-                                        <MDBRow className="ml-2">
-                                            <MDBCol sm="2">
-                                                <span className="grey-text">email:</span>
-                                            </MDBCol>
-                                            <MDBCol sm="10">
-                                                <strong>{this.state.infoPet.email}</strong>
-                                            </MDBCol>
-                                        </MDBRow>
-                                        <h5 className="indigo-text mt-4"><MDBIcon icon="cat"/> Your lovely pet</h5>
-                                        <MDBRow className="ml-2">
-                                            <MDBCol sm="2">
-                                                <span className="grey-text">kind of pet:</span>
-                                            </MDBCol>
-                                            <MDBCol sm="10">
-                                                <strong>{this.state.infoPet.type_pet}</strong>
-                                            </MDBCol>
-                                        </MDBRow>
-                                        <MDBRow className="ml-2">
-                                            <MDBCol sm="2">
-                                                <span className="grey-text">Birthdate:</span>
-                                            </MDBCol>
-                                            <MDBCol sm="10">
-                                                <strong>{this.state.infoPet.birthdate_pet}</strong>
-                                            </MDBCol>
-                                        </MDBRow>
-                                        <MDBRow className="ml-2">
-                                            <MDBCol sm="2">
-                                                <span className="grey-text">Color:</span>
-                                            </MDBCol>
-                                            <MDBCol sm="10">
-                                                <strong>{this.state.infoPet.color_pet}</strong>
-                                            </MDBCol>
-                                        </MDBRow>
+                                <MDBRow center>
+                                    <MDBCol size="8">
+                                        <CardPet infoPet={this.state.infoPet}/>
                                     </MDBCol>
                                 </MDBRow>
                             </MDBContainer>
