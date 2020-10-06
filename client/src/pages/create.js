@@ -1,17 +1,24 @@
 import React, {Fragment} from "react";
 import {BasePage} from './base';
 import {Redirect} from 'react-router'
-import {MDBAlert, MDBBtn, MDBCol, MDBContainer, MDBDatePicker, MDBIcon, MDBInput, MDBRow, MDBSelect, MDBSelectInput, MDBSelectOption, MDBSelectOptions} from "mdbreact";
+import {
+    MDBBtn,
+    MDBCol,
+    MDBContainer,
+    MDBDatePicker,
+    MDBIcon,
+    MDBInput,
+    MDBRow,
+    MDBSelect,
+    MDBSelectInput,
+    MDBSelectOption,
+    MDBSelectOptions
+} from "mdbreact";
 import MDBFileupload from "mdb-react-fileupload";
-
-
-const ErrorMessage = (props) => {
-    return (
-        <div className={props.hidden === true ? "hidden" : ""}>
-            <MDBAlert color="danger">{props.message}</MDBAlert>
-        </div>
-    );
-}
+import ValidationPopup from '../components/modal';
+import {validationData} from "../utils/validation";
+import ErrorMessage from "../components/errors";
+import dateFormat from 'dateformat'
 
 class CreatePage extends BasePage {
 
@@ -20,17 +27,39 @@ class CreatePage extends BasePage {
         this.state = {
             ...this.state,
             redirect: false,
+            openModal: false,
+            errors: [],
+            transactionInfo : {
+                transactionHash: null,
+                blockNumber: null,
+                id: null
+            },
             firstname: null,
             lastname: null,
-            email: "denis@exemple.com",
+            email: null,
             petname: null,
             petcolor: null,
             pettype: null,
             petbirthdate: null,
             photo_hash: null,
-            terms: false
+            terms: 'false'
         }
+
+        this.rules = {
+            firstname: {required: true, type: 'string', msg: 'your firstname is required'},
+            lastname: {required: true, type: 'string', msg: 'your lastname is required'},
+            email: {required: true, type: 'email', msg: 'your email is required or is not valid'},
+            petname: {required: true, type: 'string', msg: 'Name of your pet is required'},
+            petcolor: {required: true, type: 'string', msg: 'Color of your pet is required'},
+            pettype: {required: true, type: 'string', msg: 'Kind of your pet is required'},
+            petbirthdate: {required: true, type: 'date', msg: 'Birthdate of your pet is required'},
+            photo_hash: {required: true, type: 'string', msg: 'Photo of your pet is required'},
+            terms: {required: true, type: 'boolean', msg: 'Terms must be accepted'}
+        }
+
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleClose = this.handleClose.bind(this);
+
         this.handleChange = this.handleChange.bind(this);
         this.handlePetBirthdate = this.handlePetBirthdate.bind(this);
         this.handleSelectPetType = this.handleSelectPetType.bind(this);
@@ -38,21 +67,55 @@ class CreatePage extends BasePage {
         this.handleTerms = this.handleTerms.bind(this);
     }
 
-    handleChange(event) {
-        console.log(event.target.name);
-        console.log(event.target.value);
-        console.log(event.target);
-        this.setState({[event.target.name]: event.target.value});
-    }
-
     handleSubmit(event) {
         event.preventDefault();
-        console.log(this.state);
+        const errors = validationData(this.rules, this.state);
+
+        this.setState({errors: errors});
+        this.setState({openModal: errors.length === 0 ? true : false});
+        if (errors.length === 0) {
+            this.addToken();
+        }
+    }
+
+    handleClose(event) {
         this.setState({redirect: true});
     }
 
+    InfoPet()  {
+        return {
+            first_name: this.state.firstname,
+            last_name: this.state.lastname,
+            email: this.state.email,
+            name_pet: this.state.petname,
+            type_pet: this.state.pettype,
+            color_pet: this.state.petcolor,
+            birthdate_pet: dateFormat(this.state.petbirthdate, "dd/mm/yyyy"),
+            photo_hash: this.state.photo_hash
+        }
+    }
+
+    addToken = async () => {
+        let self = this;
+        const {account, contract} = this.state;
+
+        contract.methods.addPet(account, this.InfoPet()).send({from: account})
+            .on('receipt', function (receipt) {
+                self.setState({tokenId: receipt.events.AddToken.returnValues.id});
+                const transactionInfo = {
+                    transactionHash: receipt.events.AddToken.transactionHash,
+                    blockNumber:receipt.events.AddToken.blockNumber,
+                    id: receipt.events.AddToken.returnValues.id
+                }
+                self.setState({transactionInfo: transactionInfo});
+            });
+    };
+
+    handleChange(event) {
+        this.setState({[event.target.name]: event.target.value});
+    }
+
     handleSelectPetType = (value) => {
-        console.log(value);
         this.setState({pettype: value[0]});
     }
 
@@ -85,21 +148,23 @@ class CreatePage extends BasePage {
         }
     }
 
+    closeModal = () => {
+        this.setState({openModal: false});
+        this.setState({redirect: true});
+    }
 
     render() {
-        const {redirect} = this.state;
-
-
-        if (redirect) {
-            return <Redirect to='/somewhere'/>;
+        if (this.state.redirect === true) {
+            return <Redirect to='/'/>;
         }
 
         return (
             <Fragment>
+                <ValidationPopup isOpen={this.state.openModal} closeModal={this.closeModal} data={this.InfoPet()} transactionInfo={this.state.transactionInfo}/>
                 <MDBContainer>
                     <h2 className="indigo-text font-weight-bold mt-2 mb-5"><MDBIcon far icon="edit"/> Create an ID for
                         your pet</h2>
-                    <form className="needs-validation" onSubmit={this.handleSubmit}>
+                    <form className="needs-validation">
                         <div className="indigo-text">
                             <h4 className="font-weight-bold grey-text"><MDBIcon icon="user"/> Some information about You
                             </h4>
@@ -107,21 +172,15 @@ class CreatePage extends BasePage {
                                 <div className={"create-div"}>
                                     <MDBInput name="firstname" onChange={this.handleChange} value={this.state.firstname}
                                               label="Your firstname" icon="user-edit"
-                                              type="text" required validate
-                                    />
-
+                                              type="text"/>
                                 </div>
                                 <div className={"create-div"}>
                                     <MDBInput name="lastname" onChange={this.handleChange} value={this.state.lastname}
-                                              label="Your lastname" icon="user-edit" group
-                                              type="text" required validate
-                                    />
+                                              label="Your lastname" icon="user-edit" group type="text"/>
                                 </div>
                                 <div className={"create-div"}>
                                     <MDBInput name="email" onChange={this.handleChange} value={this.state.email}
-                                              label="Your email" icon="envelope" group type="email"
-                                              validate required
-                                    />
+                                              label="Your email" icon="envelope" group type="email"/>
                                 </div>
                             </div>
                             <h4 className="font-weight-bold mt-5 grey-text"><MDBIcon icon="paw"/> Information of your
@@ -129,21 +188,17 @@ class CreatePage extends BasePage {
                             <div className="px-4">
                                 <div className={"create-div"}>
                                     <MDBInput name="petname" onChange={this.handleChange} value={this.state.petname}
-                                              label="Name" icon="paw" group type="text"
-                                              required validate
-                                    />
+                                              label="Name" icon="paw" group type="text"/>
                                 </div>
                                 <div className={"create-div"}>
                                     <MDBInput name="petcolor" onChange={this.handleChange} value={this.state.petcolor}
-                                              label="Color" icon="paw" group type="text"
-                                              required validate
-                                    />
+                                              label="Color" icon="paw" group type="text"/>
                                 </div>
                                 <MDBContainer>
                                     <MDBRow middle>
                                         <MDBCol sm="8">
                                             <div className={"create-div"}>
-                                                <MDBSelect label='Kind of pet' getValue={this.handleSelectPetType} required validate>
+                                                <MDBSelect label='Kind of pet' getValue={this.handleSelectPetType}>
                                                     <MDBSelectInput selected="aaa"/>
                                                     <MDBSelectOptions>
                                                         <MDBSelectOption disabled>Kind of your pet</MDBSelectOption>
@@ -185,8 +240,8 @@ class CreatePage extends BasePage {
                                     ref={fileupload => this.fileupload = fileupload}
                                     maxFileSize="1M"
                                     allowedFileExtensions={['jpg', 'png', 'bmp']}
-                                    containerHeight={500}
-                                    maxHeight={500}
+                                    containerHeight={600}
+                                    maxHeight={1500}
                                     errorMaxHeight="Your photo must not have more than 500 pixels height"
                                     errorFileSize="The size of your photo is too big"
                                     errorFileExtension="The type of your photo is not allowed"
@@ -196,16 +251,16 @@ class CreatePage extends BasePage {
                                 completed!</h4>
                             <div className="px-4">
                                 <p className="font-weight-bold mt-3 mb-1"><strong>Terms and conditions</strong></p>
-                                <MDBInput name="terms" value={this.state.firstname} getValue={this.handleTerms}
+                                <MDBInput name="terms" getValue={this.handleTerms}
                                           label="I agreee to the terms and conditions" type="checkbox" id="checkbox"
                                           autoFocus={this.calculateAutofocus(1)}/>
                                 <MDBInput label="I want to receive newsletter" type="checkbox" id="checkbox2"/>
                                 <div className="text-right mt-2">
-                                    <MDBBtn outline color="grey">cancel</MDBBtn>
-                                    <MDBBtn outline color="success" type="submit">
-                                        submit</MDBBtn>
+                                    <MDBBtn outline color="grey" onClick={this.handleClose}>cancel</MDBBtn>
+                                    <MDBBtn outline color="success" onClick={this.handleSubmit}>submit</MDBBtn>
                                 </div>
                             </div>
+                            <ErrorMessage errors={this.state.errors}/>
                         </div>
                     </form>
                 </MDBContainer>
@@ -213,7 +268,5 @@ class CreatePage extends BasePage {
         )
     }
 }
-
-// disabled={this.state.photo_hash === null || this.state.terms === false}
 
 export default CreatePage;

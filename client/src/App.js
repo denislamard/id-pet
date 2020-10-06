@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import {BrowserRouter as Router, Route, Switch, HashRouter} from "react-router-dom";
 
 import MainPage from "./pages/main";
 import CreatePage from "./pages/create";
@@ -11,9 +11,8 @@ import Header from './components/header';
 import Footer from "./components/footer";
 import {Title} from "./components/title";
 
-import Test from "./pages/test";
-import Test1 from "./pages/test-formik";
 import CallPage from "./pages/test-call";
+import ListTestPage from "./pages/test-list";
 
 import {getWeb3} from "./utils/web3";
 import './App.css';
@@ -74,7 +73,7 @@ class App extends Component {
             <Fragment>
                 <Title name={"PetID"} version={"1.0.0"}/>
                 <Header account={this.state.account} balance={this.state.balance}/>
-                <Router>
+                <HashRouter basename="/">
                     <Switch>
                         <Route path="/" exact>
                             <MainPage web3={this.state.web3} account={this.state.account} contract={this.state.contract} ipfs={this.state.ipfs}/>
@@ -94,9 +93,13 @@ class App extends Component {
                         <Route path="/test" exact>
                             <CallPage web3={this.state.web3} account={this.state.account} contract={this.state.contract} ipfs={this.state.ipfs}/>
                         </Route>
+                        <Route path="/testlist/:id" component={ListTestPage}
+                               web3={this.state.web3} account={this.state.account} contract={this.state.contract} ipfs={this.state.ipfs}
+                        />
+
                         <Route path="*" component={NotFoundPage}/>
                     </Switch>
-                </Router>
+                </HashRouter>
                 <Footer/>
             </Fragment>
         );

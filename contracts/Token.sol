@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
-pragma experimental ABIEncoderV2;
 pragma solidity >=0.4.22 <0.8.0;
+pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -22,6 +22,7 @@ struct PetInfo {
     string email;
     string name_pet;
     string type_pet;
+    string color_pet;
     string birthdate_pet;
     string photo_hash;
 }
@@ -37,21 +38,26 @@ contract Token is ERC721, Ownable {
 
     Counters.Counter private _petIds;
 
-    constructor(string memory baseURI)
-        public
-        ERC721("Unique Pet Id Tag", "UPIT")
+    constructor(string memory baseURI) public ERC721("Unique Pet Id Tag", "UPIT")
     {
         _setBaseURI(baseURI);
     }
 
-    //function addPet(address owner, PetInfo memory info) public payable returns (uint256 Id) {
-    function addPet(address owner) public payable returns (uint256 Id) {
+    function addPet(address PetOwner, PetInfo memory info) public payable {
         _petIds.increment();
-        Id = _petIds.current();
-        _mint(owner, Id);
+        uint256 Id = _petIds.current();
+        _mint(PetOwner, Id);
         _setTokenURI(Id, Id.toString());
-        //_list_pets[Id] = info;
+        _list_pets[Id] = info;
         AddToken(Id);
-        return Id;
+    }
+
+
+    function getPetInfo(address PetOwner, uint256 id) public view returns (PetInfo memory info) {
+        require(_exists(id), "token ID not exist");
+        //require(ownerOf(id) == PetOwner || (msg.sender == owner() || msg.sender == PetOwner), 'the owner is not the given address');
+        require(ownerOf(id) == PetOwner || msg.sender == owner(), 'the owner is not the given address');
+        info = _list_pets[id];
+        return info;
     }
 }
