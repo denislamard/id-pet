@@ -13,6 +13,7 @@ import {Title} from "./components/title";
 
 import CallPage from "./pages/test-call";
 import ListTestPage from "./pages/test-list";
+import TestScan from "./pages/test-scan";
 
 import {getWeb3} from "./utils/web3";
 import './App.css';
@@ -91,7 +92,7 @@ class App extends Component {
                             <ChangePage web3={this.state.web3} account={this.state.account} contract={this.state.contract} ipfs={this.state.ipfs}/>
                         </Route>
                         <Route path="/test" exact>
-                            <CallPage web3={this.state.web3} account={this.state.account} contract={this.state.contract} ipfs={this.state.ipfs}/>
+                            <TestScan web3={this.state.web3} account={this.state.account} contract={this.state.contract} ipfs={this.state.ipfs}/>
                         </Route>
                         <Route path="/testlist/:id" component={ListTestPage}
                                web3={this.state.web3} account={this.state.account} contract={this.state.contract} ipfs={this.state.ipfs}

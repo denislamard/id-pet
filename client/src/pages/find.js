@@ -111,7 +111,7 @@ class FindPage extends BasePage {
                     <MDBRow center>
                         <MDBCol sm="6">
                             <div className="indigo-text create-div">
-                                <MDBInput name="findId" onChange={this.handleChange} value={this.state.findId} label="Type a valid ID" icon="user-edit" group type="text"/>
+                                <MDBInput name="findId" onChange={this.handleChange} value={this.state.findId} label="Type a valid ID" icon="pen-fancy" group type="text"/>
                             </div>
                         </MDBCol>
                     </MDBRow>
