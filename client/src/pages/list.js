@@ -15,9 +15,10 @@ import {
     MDBTableHead,
     MDBCardImage,
     MDBCardTitle,
-    MDBCardText
+    MDBCardText, MDBInput, MDBSpinner
 } from 'mdbreact';
 import {PhotoPopup} from '../components/modal';
+import {listPets} from "../utils/list";
 
 const ShowPetsAsRow = 1;
 const ShowPetsAsCard = 2;
@@ -127,6 +128,7 @@ class ListPage extends BasePage {
         super(props);
         this.state = {
             ...this.state,
+            wait: true,
             showing: ShowPetsAsRow,
             redirect: false,
             openModal: false,
@@ -141,25 +143,30 @@ class ListPage extends BasePage {
     }
 
     componentDidMount() {
-        this.makeListPets();
+        //this.makeListPets();
+        let list = [];
+        listPets(this.state.contract, this.state.account)
+            .then((pets) => {
+                Object.keys(pets).forEach(item => {
+                    list.push({
+                        id: pets[item].id,
+                        name: pets[item].name_pet,
+                        type: pets[item].type_pet,
+                        color: pets[item].color_pet,
+                        photo: <MDBBtn flat onClick={(e) => this.openModal(pets[item].photo_hash, pets[item].name_pet, e)}><img
+                            src={"https://ipfs.io/ipfs/".concat(pets[item].photo_hash)} width="40px"
+                            alt={pets[item].name_pet}/></MDBBtn>,
+                        url: "https://ipfs.io/ipfs/".concat(pets[item].photo_hash)
+                    });
+                });
+                this.setState({list: list, wait: false});
+            });
     }
 
     handleClose(event) {
         this.setState({redirect: true});
     }
 
-    getInfoPet = async (list, tokenId, contract, account) => {
-        const data = await contract.methods.getPetInfo(account, tokenId).call({from: account});
-        list.push({
-            id: tokenId,
-            name: data.name_pet,
-            type: data.type_pet,
-            color: data.color_pet,
-            photo: <MDBBtn flat onClick={(e) => this.openModal(data.photo_hash, data.name_pet, e)}><img src={"https://ipfs.io/ipfs/".concat(data.photo_hash)} width="40px"
-                                                                                                        alt={data.name_pet}/></MDBBtn>,
-            url: "https://ipfs.io/ipfs/".concat(data.photo_hash),
-        });
-    }
 
     showAsRow = (event) => {
         this.setState({showing: ShowPetsAsRow});
@@ -167,28 +174,6 @@ class ListPage extends BasePage {
 
     showAsCard = (event) => {
         this.setState({showing: ShowPetsAsCard});
-    }
-
-
-    makeListPets = async () => {
-        const contract = this.state.contract;
-        const owner = await contract.methods.owner().call();
-        const account = this.state.account;
-        let list = [];
-
-        if (owner !== this.state.account) {
-            const count = await contract.methods.balanceOf(account).call({from: account});
-            for (let i = 0; i < count; i++) {
-                const tokenId = await contract.methods.tokenOfOwnerByIndex(account, i).call({from: account});
-                await this.getInfoPet(list, tokenId, contract, account);
-            }
-        } else {
-            const tokens = await contract.methods.totalSupply().call({from: account});
-            for (let token = 1; token <= tokens; token++) {
-                await this.getInfoPet(list, token, contract, account);
-            }
-        }
-        this.setState({list: list});
     }
 
     closeModal = (event) => {
@@ -221,13 +206,16 @@ class ListPage extends BasePage {
                             </div>
                         </MDBCardHeader>
                         <MDBCardBody cascade>
-                            {this.state.list.length === 0 &&
-                            <div className={"text-center grey-text align-middle p-1"}>
-                                <p style={{fontSize: "0.90em"}}>No pets already registered</p>
-                            </div>
-                            }
-                            {this.state.list.length > 0 &&
-                            <ShowPets list={this.state.list} showing={this.state.showing}/>
+                            {this.state.wait === true
+                                ? <div className={"text-center align-middle"}><MDBSpinner className={"my-2"} big/></div>
+                                : <Fragment>
+                                    {this.state.list.length === 0
+                                        ? <div className={"text-center grey-text align-middle p-1"}>
+                                            <p style={{fontSize: "0.90em"}}>No pets already registered</p>
+                                        </div>
+                                        : <ShowPets list={this.state.list} showing={this.state.showing}/>
+                                    }
+                                </Fragment>
                             }
                         </MDBCardBody>
                     </MDBCard>

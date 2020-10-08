@@ -17,6 +17,7 @@ library Utils {
 */
 
 struct PetInfo {
+    uint256 id;
     string first_name;
     string last_name;
     string email;
@@ -48,6 +49,7 @@ contract Token is ERC721, Ownable {
         uint256 Id = _petIds.current();
         _mint(PetOwner, Id);
         _setTokenURI(Id, Id.toString());
+	info.id = Id;
         _list_pets[Id] = info;
         AddToken(Id);
     }
@@ -55,7 +57,6 @@ contract Token is ERC721, Ownable {
 
     function getPetInfo(address PetOwner, uint256 id) public view returns (PetInfo memory info) {
         require(_exists(id), "token ID not exist");
-        //require(ownerOf(id) == PetOwner || (msg.sender == owner() || msg.sender == PetOwner), 'the owner is not the given address');
         require(ownerOf(id) == PetOwner || msg.sender == owner(), 'the owner is not the given address');
         info = _list_pets[id];
         return info;

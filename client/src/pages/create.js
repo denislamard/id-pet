@@ -84,6 +84,7 @@ class CreatePage extends BasePage {
 
     InfoPet()  {
         return {
+            id: 0,
             first_name: this.state.firstname,
             last_name: this.state.lastname,
             email: this.state.email,

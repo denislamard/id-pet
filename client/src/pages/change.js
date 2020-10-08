@@ -3,6 +3,7 @@ import {Redirect} from 'react-router'
 import {BasePage} from './base';
 import QrReader from 'react-qr-scanner'
 import {MDBBtn, MDBContainer, MDBIcon, MDBModal, MDBModalHeader, MDBModalBody, MDBModalFooter, MDBRow, MDBCol, MDBInput, MDBTable, MDBTableHead, MDBTableBody} from "mdbreact";
+import {listPets} from "../utils/list";
 
 const previewStyle = {
     height: "100%",
@@ -60,7 +61,21 @@ class ChangePage extends BasePage {
     }
 
     componentDidMount() {
-        this.makeListPets();
+        let list = [];
+        listPets(this.state.contract, this.state.account)
+            .then((pets) => {
+                Object.keys(pets).forEach(item => {
+                    list.push({
+                        check: <MDBInput onChange={this.onChangeCheckbox.bind(this)} name={"checkbox".concat(pets[item].id)} label=" " type="checkbox" id={pets[item].id}/>,
+                        id: pets[item].id,
+                        name: pets[item].name_pet,
+                        type: pets[item].type_pet,
+                        color: pets[item].color_pet,
+                        photo: <img src={"https://ipfs.io/ipfs/".concat(pets[item].photo_hash)} width="40px" alt={pets[item].name_pet}/>
+                    });
+                });
+                this.setState({list: list});
+            });
     }
 
     handleClose(event) {
@@ -87,41 +102,8 @@ class ChangePage extends BasePage {
         console.error(err)
     }
 
-    onChangeCheckbox(e) {
-        console.log(e.target.id, e.target.checked);
-    }
-
-    getInfoPet = async (list, tokenId, contract, account) => {
-        const data = await contract.methods.getPetInfo(account, tokenId).call({from: account});
-        list.push({
-            check: <MDBInput onChange={this.onChangeCheckbox.bind(this)} name={"checkbox".concat(tokenId)} label=" " type="checkbox" id={tokenId} />,
-            id: tokenId,
-            name: data.name_pet,
-            type: data.type_pet,
-            color: data.color_pet,
-            photo: <img src={"https://ipfs.io/ipfs/".concat(data.photo_hash)} width="40px" alt={data.name_pet}/>
-        });
-    }
-
-    makeListPets = async () => {
-        const contract = this.state.contract;
-        const owner = await contract.methods.owner().call();
-        const account = this.state.account;
-        let list = [];
-
-        if (owner !== this.state.account) {
-            const count = await contract.methods.balanceOf(account).call({from: account});
-            for (let i = 0; i < count; i++) {
-                const tokenId = await contract.methods.tokenOfOwnerByIndex(account, i).call({from: account});
-                await this.getInfoPet(list, tokenId, contract, account);
-            }
-        } else {
-            const tokens = await contract.methods.totalSupply().call({from: account});
-            for (let token = 1; token <= tokens; token++) {
-                await this.getInfoPet(list, token, contract, account);
-            }
-        }
-        this.setState({list: list});
+    onChangeCheckbox(event) {
+        console.log(event.target.id, event.target.checked);
     }
 
     render() {
@@ -141,19 +123,26 @@ class ChangePage extends BasePage {
                         </MDBCol>
                     </MDBRow>
                     {(this.state.address === null || this.state.address === "") &&
-                    <MDBRow center className="mt-5">
-                        <MDBCol size={6}>
-                            <QrReader
-                                delay={this.state.delay}
-                                style={previewStyle}
-                                onError={this.handleError}
-                                onScan={this.handleScan}
-                            />
-                        </MDBCol>
-                    </MDBRow>
+                    <Fragment>
+                        <MDBRow center className="mt-3">
+                            <MDBCol size={6}>
+                                <p className="text-center grey-text"><strong>Scan your address</strong></p>
+                            </MDBCol>
+                        </MDBRow>
+                        <MDBRow center>
+                            <MDBCol size={6}>
+                                <QrReader
+                                    delay={this.state.delay}
+                                    style={previewStyle}
+                                    onError={this.handleError}
+                                    onScan={this.handleScan}
+                                />
+                            </MDBCol>
+                        </MDBRow>
+                    </Fragment>
                     }
-                    {(this.state.address !== null && this.state.address !== "") &&
-                    <div  className="mt-5">
+
+                    <div className="mt-5">
                         <h5 className="font-weight-bold grey-text"><MDBIcon icon="list"/> List of your pets</h5>
                         <MDBRow center className="ml-3 mt-3">
                             <MDBCol size={12}>
@@ -164,7 +153,7 @@ class ChangePage extends BasePage {
                             </MDBCol>
                         </MDBRow>
                     </div>
-                    }
+
                     <div className="text-right mt-2">
                         <MDBBtn outline color="grey" onClick={this.handleClose}>Back to the menu</MDBBtn>
                         <MDBBtn outline color="success" onClick={this.applyChanges}>Apply changes</MDBBtn>
