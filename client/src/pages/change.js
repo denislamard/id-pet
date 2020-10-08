@@ -69,7 +69,7 @@ class ChangePage extends BasePage {
 
     applyChanges(event) {
         alert('ok');
-        console.log(this.state.list);
+        console.log(this.state.list[0].check.checked);
     }
 
     handleChange(event) {
@@ -87,10 +87,14 @@ class ChangePage extends BasePage {
         console.error(err)
     }
 
+    onChangeCheckbox(e) {
+        console.log(e.target.id, e.target.checked);
+    }
+
     getInfoPet = async (list, tokenId, contract, account) => {
         const data = await contract.methods.getPetInfo(account, tokenId).call({from: account});
         list.push({
-            check: <MDBInput label=" " type="checkbox" id={"checkbox".concat(tokenId)} />,
+            check: <MDBInput onChange={this.onChangeCheckbox.bind(this)} name={"checkbox".concat(tokenId)} label=" " type="checkbox" id={tokenId} />,
             id: tokenId,
             name: data.name_pet,
             type: data.type_pet,
