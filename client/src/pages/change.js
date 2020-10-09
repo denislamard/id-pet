@@ -1,8 +1,8 @@
-import React, {Component, Fragment} from "react";
+import React, {Fragment} from "react";
 import {Redirect} from 'react-router'
 import {BasePage} from './base';
 import QrReader from 'react-qr-scanner'
-import {MDBBtn, MDBContainer, MDBIcon, MDBModal, MDBModalHeader, MDBModalBody, MDBModalFooter, MDBRow, MDBCol, MDBInput, MDBTable, MDBTableHead, MDBTableBody} from "mdbreact";
+import {MDBBtn, MDBCol, MDBContainer, MDBIcon, MDBInput, MDBRow, MDBSpinner, MDBTable, MDBTableBody, MDBTableHead} from "mdbreact";
 import {listPets} from "../utils/list";
 
 const previewStyle = {
@@ -49,6 +49,7 @@ class ChangePage extends BasePage {
         super(props);
         this.state = {
             ...this.state,
+            wait: true,
             list: [],
             delay: 100,
             address: null,
@@ -74,7 +75,7 @@ class ChangePage extends BasePage {
                         photo: <img src={"https://ipfs.io/ipfs/".concat(pets[item].photo_hash)} width="40px" alt={pets[item].name_pet}/>
                     });
                 });
-                this.setState({list: list});
+                this.setState({list: list, wait: false});
             });
     }
 
@@ -85,6 +86,7 @@ class ChangePage extends BasePage {
     applyChanges(event) {
         alert('ok');
         console.log(this.state.list[0].check.checked);
+        console.log('address: ', this.state.address);
     }
 
     handleChange(event) {
@@ -94,7 +96,7 @@ class ChangePage extends BasePage {
     }
 
     handleScan(data) {
-        console.log(this.state.web3.utils.isAddress(data));
+        //console.log(this.state.web3.utils.isAddress(data));
         this.setState({address: data});
     }
 
@@ -146,10 +148,20 @@ class ChangePage extends BasePage {
                         <h5 className="font-weight-bold grey-text"><MDBIcon icon="list"/> List of your pets</h5>
                         <MDBRow center className="ml-3 mt-3">
                             <MDBCol size={12}>
-                                <MDBTable btn fixed>
-                                    <MDBTableHead columns={columnsInfo}/>
-                                    <MDBTableBody rows={this.state.list}/>
-                                </MDBTable>
+                                {this.state.wait === true
+                                    ? <div className={"text-center align-middle"}><MDBSpinner className={"my-2"} big/></div>
+                                    : <MDBTable btn fixed>
+                                        {this.state.list.length === 0
+                                            ? <div className={"text-center grey-text align-middle p-1 mt-4"}>
+                                                <p style={{fontSize: "0.95em"}}>No pets already registered</p>
+                                            </div>
+                                            : <Fragment>
+                                                <MDBTableHead columns={columnsInfo}/>
+                                                < MDBTableBody rows={this.state.list}/>
+                                            </Fragment>
+                                        }
+                                    </MDBTable>
+                                }
                             </MDBCol>
                         </MDBRow>
                     </div>

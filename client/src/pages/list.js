@@ -211,7 +211,7 @@ class ListPage extends BasePage {
                                 : <Fragment>
                                     {this.state.list.length === 0
                                         ? <div className={"text-center grey-text align-middle p-1"}>
-                                            <p style={{fontSize: "0.90em"}}>No pets already registered</p>
+                                            <p style={{fontSize: "0.95em"}}>No pets already registered</p>
                                         </div>
                                         : <ShowPets list={this.state.list} showing={this.state.showing}/>
                                     }
