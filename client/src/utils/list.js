@@ -1,4 +1,3 @@
-import React from "react";
 
 async function _getInfoPet(tokenId, contract, account) {
     return await contract.methods.getPetInfo(account, tokenId).call({from: account});

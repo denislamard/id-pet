@@ -2,8 +2,10 @@ import React, {Fragment} from "react";
 import {Redirect} from 'react-router'
 import {BasePage} from './base';
 import QrReader from 'react-qr-scanner'
-import {MDBBtn, MDBCol, MDBContainer, MDBIcon, MDBInput, MDBRow, MDBSpinner, MDBTable, MDBTableBody, MDBTableHead} from "mdbreact";
+import {MDBBtn, MDBCol, MDBContainer, MDBIcon, MDBInput, MDBRow, MDBSpinner, MDBTable, MDBTableBody, MDBTableHead, MDBCard, MDBCardTitle} from "mdbreact";
 import {listPets} from "../utils/list";
+import ErrorMessage from "../components/errors";
+import {validationData} from "../utils/validation";
 
 const previewStyle = {
     height: "100%",
@@ -50,15 +52,24 @@ class ChangePage extends BasePage {
         this.state = {
             ...this.state,
             wait: true,
+            errors: [],
             list: [],
+            selected: [],
             delay: 100,
             address: null,
             redirect: false
         }
+
+        this.rules = {
+            address: {required: true, type: 'string', msg: 'address of the new owner is required'},
+            selected: {required: true, type: 'list', msg: 'at least one pet must be selected'}
+        }
+
         this.handleClose = this.handleClose.bind(this);
         this.applyChanges = this.applyChanges.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleScan = this.handleScan.bind(this);
+        this.onChangeCheckbox = this.onChangeCheckbox.bind(this);
     }
 
     componentDidMount() {
@@ -67,7 +78,7 @@ class ChangePage extends BasePage {
             .then((pets) => {
                 Object.keys(pets).forEach(item => {
                     list.push({
-                        check: <MDBInput onChange={this.onChangeCheckbox.bind(this)} name={"checkbox".concat(pets[item].id)} label=" " type="checkbox" id={pets[item].id}/>,
+                        check: <MDBInput onChange={this.onChangeCheckbox} name={"checkbox".concat(pets[item].id)} label=" " type="checkbox" id={pets[item].id}/>,
                         id: pets[item].id,
                         name: pets[item].name_pet,
                         type: pets[item].type_pet,
@@ -83,15 +94,33 @@ class ChangePage extends BasePage {
         this.setState({redirect: true});
     }
 
+    changePetOwner = async () => {
+        let self = this;
+        try {
+            this.state.selected.forEach(async function (tokenId) {
+                await self.state.contract.methods.safeTransferFrom(self.state.account, self.state.address, tokenId).send({from: self.state.account});
+                window.location.reload(false);
+            });
+        } catch (err) {
+            console.log(err);
+            let errors = ["Failed to change the owner"];
+            this.setState({errors: errors});
+        }
+    }
+
     applyChanges(event) {
-        alert('ok');
-        console.log(this.state.list[0].check.checked);
-        console.log('address: ', this.state.address);
+        event.preventDefault();
+        const errors = validationData(this.rules, this.state);
+        if (errors.length === 0) {
+            this.changePetOwner();
+        } else {
+            this.setState({errors: errors});
+        }
     }
 
     handleChange(event) {
-        let addr = event.target.value;
-        console.log(this.state.web3.utils.isAddress(addr));
+        //let addr = event.target.value;
+        //console.log(this.state.web3.utils.isAddress(addr));
         this.setState({[event.target.name]: event.target.value});
     }
 
@@ -105,7 +134,13 @@ class ChangePage extends BasePage {
     }
 
     onChangeCheckbox(event) {
-        console.log(event.target.id, event.target.checked);
+        let list = this.state.selected;
+        if (!event.target.checked) {
+            list.splice(list.indexOf(event.target.id), 1);
+        } else {
+            list.push(event.target.id);
+        }
+        this.setState({selected: list});
     }
 
     render() {
@@ -126,24 +161,21 @@ class ChangePage extends BasePage {
                     </MDBRow>
                     {(this.state.address === null || this.state.address === "") &&
                     <Fragment>
-                        <MDBRow center className="mt-3">
-                            <MDBCol size={6}>
-                                <p className="text-center grey-text"><strong>Scan your address</strong></p>
-                            </MDBCol>
-                        </MDBRow>
                         <MDBRow center>
                             <MDBCol size={6}>
-                                <QrReader
-                                    delay={this.state.delay}
-                                    style={previewStyle}
-                                    onError={this.handleError}
-                                    onScan={this.handleScan}
-                                />
+                                <MDBCard className="card-body mt-5">
+                                    <MDBCardTitle className="text-center grey-text"><strong>Scan the QRCode</strong></MDBCardTitle>
+                                    <QrReader
+                                        delay={this.state.delay}
+                                        style={previewStyle}
+                                        onError={this.handleError}
+                                        onScan={this.handleScan}
+                                    />
+                                </MDBCard>
                             </MDBCol>
                         </MDBRow>
                     </Fragment>
                     }
-
                     <div className="mt-5">
                         <h5 className="font-weight-bold grey-text"><MDBIcon icon="list"/> List of your pets</h5>
                         <MDBRow center className="ml-3 mt-3">
@@ -165,11 +197,19 @@ class ChangePage extends BasePage {
                             </MDBCol>
                         </MDBRow>
                     </div>
-
-                    <div className="text-right mt-2">
-                        <MDBBtn outline color="grey" onClick={this.handleClose}>Back to the menu</MDBBtn>
-                        <MDBBtn outline color="success" onClick={this.applyChanges}>Apply changes</MDBBtn>
-                    </div>
+                    <MDBRow>
+                        <MDBCol size={12}>
+                            <div className="text-right mt-2">
+                                <MDBBtn outline color="grey" onClick={this.handleClose}>Back to the menu</MDBBtn>
+                                <MDBBtn outline color="success" onClick={this.applyChanges}>Apply changes</MDBBtn>
+                            </div>
+                        </MDBCol>
+                    </MDBRow>
+                    <MDBRow center>
+                        <MDBCol sm="12" className="text-left">
+                            <ErrorMessage errors={this.state.errors}/>
+                        </MDBCol>
+                    </MDBRow>
                 </MDBContainer>
             </Fragment>
         );

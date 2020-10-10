@@ -15,7 +15,7 @@ import {
     MDBTableHead,
     MDBCardImage,
     MDBCardTitle,
-    MDBCardText, MDBInput, MDBSpinner
+    MDBSpinner
 } from 'mdbreact';
 import {PhotoPopup} from '../components/modal';
 import {listPets} from "../utils/list";

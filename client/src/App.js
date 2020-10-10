@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import {BrowserRouter as Router, Route, Switch, HashRouter} from "react-router-dom";
+import {Route, Switch, HashRouter} from "react-router-dom";
 
 import MainPage from "./pages/main";
 import CreatePage from "./pages/create";
@@ -10,10 +10,6 @@ import NotFoundPage from "./pages/404";
 import Header from './components/header';
 import Footer from "./components/footer";
 import {Title} from "./components/title";
-
-import CallPage from "./pages/test-call";
-import ListTestPage from "./pages/test-list";
-import TestScan from "./pages/test-scan";
 
 import {getWeb3} from "./utils/web3";
 import './App.css';
@@ -91,13 +87,6 @@ class App extends Component {
                         <Route path="/change" exact>
                             <ChangePage web3={this.state.web3} account={this.state.account} contract={this.state.contract} ipfs={this.state.ipfs}/>
                         </Route>
-                        <Route path="/test" exact>
-                            <TestScan web3={this.state.web3} account={this.state.account} contract={this.state.contract} ipfs={this.state.ipfs}/>
-                        </Route>
-                        <Route path="/testlist/:id" component={ListTestPage}
-                               web3={this.state.web3} account={this.state.account} contract={this.state.contract} ipfs={this.state.ipfs}
-                        />
-
                         <Route path="*" component={NotFoundPage}/>
                     </Switch>
                 </HashRouter>

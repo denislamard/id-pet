@@ -29,6 +29,13 @@ export const validationData = (rules, data) => {
                             }
                         }
                         break
+                    case 'list':
+                        if (Array.isArray(value)) {
+                            if (value.length === 0) {
+                                errors.push(rules[field].msg);
+                            }
+                        }
+                        break
                     default:
                         if (value === null || validator.isEmpty(value)) {
                             errors.push(rules[field].msg);

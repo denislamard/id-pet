@@ -84,9 +84,10 @@ class FindPage extends BasePage {
         event.preventDefault();
         this.setState({infoPet: null});
         const errors = validationData(this.rules, this.state);
-        this.setState({errors: errors});
         if (errors.length === 0) {
             this.getInfoPet();
+        } else {
+            this.setState({errors: errors});
         }
     }
 

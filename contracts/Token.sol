@@ -7,15 +7,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
-/*
-library Utils {
-    function append(string memory a, string memory b) private pure returns (string memory) {
-        return string(abi.encodePacked(a, b));
-    }
-
-}
-*/
-
 struct PetInfo {
     uint256 id;
     string first_name;
