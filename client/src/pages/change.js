@@ -2,10 +2,11 @@ import React, {Fragment} from "react";
 import {Redirect} from 'react-router'
 import {BasePage} from './base';
 import QrReader from 'react-qr-scanner'
-import {MDBBtn, MDBCol, MDBContainer, MDBIcon, MDBInput, MDBRow, MDBSpinner, MDBTable, MDBTableBody, MDBTableHead, MDBCard, MDBCardTitle} from "mdbreact";
+import {MDBBtn, MDBCard, MDBCardTitle, MDBCol, MDBContainer, MDBIcon, MDBInput, MDBRow, MDBSpinner, MDBTable, MDBTableBody, MDBTableHead} from "mdbreact";
 import {listPets} from "../utils/list";
 import ErrorMessage from "../components/errors";
 import {validationData} from "../utils/validation";
+import {TransferPopup} from '../components/modal';
 
 const previewStyle = {
     height: "100%",
@@ -51,25 +52,27 @@ class ChangePage extends BasePage {
         super(props);
         this.state = {
             ...this.state,
+            isOpen: false,
             wait: true,
             errors: [],
             list: [],
-            selected: [],
             delay: 100,
             address: null,
-            redirect: false
+            redirect: false,
+            transactionHash: null,
+            error: null
         }
 
         this.rules = {
-            address: {required: true, type: 'string', msg: 'address of the new owner is required'},
-            selected: {required: true, type: 'list', msg: 'at least one pet must be selected'}
+            address: {required: true, type: 'string', msg: 'address of the new owner is required'}
         }
 
         this.handleClose = this.handleClose.bind(this);
-        this.applyChanges = this.applyChanges.bind(this);
+        //this.applyChanges = this.applyChanges.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleScan = this.handleScan.bind(this);
         this.onChangeCheckbox = this.onChangeCheckbox.bind(this);
+        this.closeModal = this.closeModal.bind(this);
     }
 
     componentDidMount() {
@@ -78,7 +81,7 @@ class ChangePage extends BasePage {
             .then((pets) => {
                 Object.keys(pets).forEach(item => {
                     list.push({
-                        check: <MDBInput onChange={this.onChangeCheckbox} name={"checkbox".concat(pets[item].id)} label=" " type="checkbox" id={pets[item].id}/>,
+                        check: <MDBInput onChange={this.onChangeCheckbox} checked={false} name={"checkbox".concat(pets[item].id)} label=" " type="checkbox" id={pets[item].id}/>,
                         id: pets[item].id,
                         name: pets[item].name_pet,
                         type: pets[item].type_pet,
@@ -90,33 +93,23 @@ class ChangePage extends BasePage {
             });
     }
 
+    closeModal = (event) => {
+        this.setState({isOpen: false});
+    }
+
     handleClose(event) {
         this.setState({redirect: true});
     }
 
-    changePetOwner = async () => {
-        let self = this;
+    changePetOwner = async (tokenId) => {
+        this.setState({isOpen: true});
         try {
-            this.state.selected.forEach(async function (tokenId) {
-                await self.state.contract.methods.safeTransferFrom(self.state.account, self.state.address, tokenId).send({from: self.state.account});
-                window.location.reload(false);
-            });
+            let info = await this.state.contract.methods.safeTransferFrom(this.state.account, this.state.address, tokenId).send({from: this.state.account});
+            this.setState({transactionHash: info.transactionHash, error: null})
         } catch (err) {
-            console.log(err);
-            let errors = ["Failed to change the owner"];
-            this.setState({errors: errors});
+            this.setState({error: err});
         }
-    }
-
-    applyChanges(event) {
-        event.preventDefault();
-        const errors = validationData(this.rules, this.state);
-        if (errors.length === 0) {
-            this.changePetOwner();
-        } else {
-            this.setState({errors: errors});
-        }
-    }
+   }
 
     handleChange(event) {
         //let addr = event.target.value;
@@ -134,13 +127,11 @@ class ChangePage extends BasePage {
     }
 
     onChangeCheckbox(event) {
-        let list = this.state.selected;
-        if (!event.target.checked) {
-            list.splice(list.indexOf(event.target.id), 1);
-        } else {
-            list.push(event.target.id);
+        const errors = validationData(this.rules, this.state);
+        this.setState({errors: errors});
+        if (errors.length === 0) {
+            this.changePetOwner(event.target.id);
         }
-        this.setState({selected: list});
     }
 
     render() {
@@ -149,6 +140,7 @@ class ChangePage extends BasePage {
         }
         return (
             <Fragment>
+                <TransferPopup isOpen={this.state.isOpen} error={this.state.error} transactionHash={this.state.transactionHash} closeModal={this.closeModal}/>
                 <MDBContainer>
                     <h2 className="indigo-text font-weight-bold mt-2 mb-5"><MDBIcon icon="exchange-alt"/> Change a pet'owner</h2>
                     <h5 className="font-weight-bold grey-text"><MDBIcon icon="address-book"/> Address of the future owner</h5>
@@ -200,8 +192,7 @@ class ChangePage extends BasePage {
                     <MDBRow>
                         <MDBCol size={12}>
                             <div className="text-right mt-2">
-                                <MDBBtn outline color="grey" onClick={this.handleClose}>Back to the menu</MDBBtn>
-                                <MDBBtn outline color="success" onClick={this.applyChanges}>Apply changes</MDBBtn>
+                                <MDBBtn outline color="success" onClick={this.handleClose}>Back to the menu</MDBBtn>
                             </div>
                         </MDBCol>
                     </MDBRow>

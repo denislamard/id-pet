@@ -1,7 +1,7 @@
 import React from 'react';
 import {MDBBtn, MDBCol, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBRow, MDBSpinner} from 'mdbreact';
 
-const ValidationPopup = (props) => {
+export const ValidationPopup = (props) => {
     const birthdate = props.data.birthdate_pet !== null ? props.data.birthdate_pet.toLocaleString().substring(1, 10) : null;
     return (
         <MDBContainer>
@@ -26,23 +26,30 @@ const ValidationPopup = (props) => {
                         </MDBRow>
                         <MDBRow>
                             <MDBCol md="12">
-                                {props.transactionInfo.id === null
-                                    ? <div className="text-center my-3"><MDBSpinner multicolor/></div>
-                                    : <MDBContainer fluid>
-                                        <div className="text-left my-3 p-3 m-3" style={{fontSize: "0.85em", border: "solid 1px grey"}}>
-                                            <p className="py-0 my-1">Transaction hash: <a target="_blank" rel="noopener noreferrer"
-                                                                                          href={'https://goerli.etherscan.io/tx/' + props.transactionInfo.transactionHash}><strong>{props.transactionInfo.transactionHash}</strong></a>
-                                            </p>
-                                            <p className="py-0  my-1">Block number: <strong>{props.transactionInfo.blockNumber}</strong></p>
-                                            <p className="py-0  my-1">Token ID :<strong>{props.transactionInfo.id}</strong></p>
-                                        </div>
-                                    </MDBContainer>
+                                {(props.transactionInfo.id === null && props.error === null) &&
+                                <div className="text-center my-3"><MDBSpinner multicolor/></div>
+                                }
+                                {(props.transactionInfo.id !== null && props.error === null) &&
+                                <MDBContainer fluid>
+                                    <div className="text-left my-3 p-3 m-3" style={{fontSize: "0.85em", border: "solid 1px grey"}}>
+                                        <p className="py-0 my-1">Transaction hash: <a target="_blank" rel="noopener noreferrer"
+                                                                                      href={'https://goerli.etherscan.io/tx/' + props.transactionInfo.transactionHash}><strong>{props.transactionInfo.transactionHash}</strong></a>
+                                        </p>
+                                        <p className="py-0  my-1">Block number: <strong>{props.transactionInfo.blockNumber}</strong></p>
+                                        <p className="py-0  my-1">Token ID :<strong>{props.transactionInfo.id}</strong></p>
+                                    </div>
+                                </MDBContainer>
+                                }
+                                {(props.transactionInfo.id === null && props.error !== null) &&
+                                <div className="text-center my-3">
+                                    <p className="text-danger">{props.error.message}</p>
+                                </div>
                                 }
                             </MDBCol>
                         </MDBRow>
                     </MDBContainer>
                 </MDBModalBody>
-                {props.transactionInfo.id !== null &&
+                {(props.transactionHash !== null || props.error !== null) &&
                 <MDBModalFooter>
                     < MDBBtn outline color="success" onClick={props.closeModal}>Close</MDBBtn>
                 </MDBModalFooter>
@@ -75,5 +82,34 @@ export const PhotoPopup = (props) => {
     );
 }
 
-
-export default ValidationPopup;
+export const TransferPopup = (props) => {
+    return (
+        <MDBContainer>
+            <MDBModal isOpen={props.isOpen} centered>
+                <MDBModalHeader toggle={props.isOpen}>Transfer ongoing</MDBModalHeader>
+                <MDBModalBody>
+                    <div className="text-center">
+                        {(props.transactionHash === null && props.error === null) &&
+                        <MDBSpinner multicolor/>
+                        }
+                        {(props.transactionHash !== null && props.error === null) &&
+                        <p>The pet has been transferred with success</p>
+                        }
+                        {(props.transactionHash === null && props.error !== null) &&
+                        <div className="text-center my-3">
+                            <p className="text-danger">{props.error.message}</p>
+                        </div>
+                        }
+                    </div>
+                </MDBModalBody>
+                {(props.transactionHash !== null || props.error !== null) &&
+                <MDBModalFooter>
+                    <MDBContainer className="text-center">
+                        <MDBBtn outline color="success" onClick={props.closeModal}>Close</MDBBtn>
+                    </MDBContainer>
+                </MDBModalFooter>
+                }
+            </MDBModal>
+        </MDBContainer>
+    );
+}

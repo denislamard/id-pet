@@ -15,7 +15,7 @@ import {
     MDBSelectOptions
 } from "mdbreact";
 import MDBFileupload from "mdb-react-fileupload";
-import ValidationPopup from '../components/modal';
+import {ValidationPopup} from '../components/modal';
 import {validationData} from "../utils/validation";
 import ErrorMessage from "../components/errors";
 import dateFormat from 'dateformat'
@@ -42,7 +42,8 @@ class CreatePage extends BasePage {
             pettype: null,
             petbirthdate: null,
             photo_hash: null,
-            terms: 'false'
+            terms: 'false',
+            metaError: null,
         }
 
         this.rules = {
@@ -76,6 +77,18 @@ class CreatePage extends BasePage {
         if (errors.length === 0) {
             this.addToken();
         }
+        /*
+            try {
+                this.addToken();
+            } catch (err) {
+                console.log('***********************************')
+                console.log(err);
+                console.log('***********************************')
+                this.setState({metaError: err});
+            }
+        }
+
+         */
     }
 
     handleClose(event) {
@@ -100,6 +113,27 @@ class CreatePage extends BasePage {
         let self = this;
         const {account, contract} = this.state;
 
+        try {
+            let info = await contract.methods.addPet(account, this.InfoPet()).send({from: account});
+            console.log('INFO*****************************************')
+            console.log(info);
+            console.log('INFO*****************************************')
+            const transactionInfo = {
+                transactionHash: info.events.AddToken.transactionHash,
+                blockNumber:info.events.AddToken.blockNumber,
+                id: info.events.AddToken.returnValues.id
+            }
+            self.setState({transactionInfo: transactionInfo, meteError: null});
+        } catch (err) {
+            console.log('***********************************')
+            console.log(err);
+            console.log('***********************************')
+            this.setState({metaError: err});
+        }
+
+
+
+        /*
         contract.methods.addPet(account, this.InfoPet()).send({from: account})
             .on('receipt', function (receipt) {
                 self.setState({tokenId: receipt.events.AddToken.returnValues.id});
@@ -110,6 +144,8 @@ class CreatePage extends BasePage {
                 }
                 self.setState({transactionInfo: transactionInfo});
             });
+
+         */
     };
 
     handleChange(event) {
@@ -161,7 +197,7 @@ class CreatePage extends BasePage {
 
         return (
             <Fragment>
-                <ValidationPopup isOpen={this.state.openModal} closeModal={this.closeModal} data={this.InfoPet()} transactionInfo={this.state.transactionInfo}/>
+                <ValidationPopup isOpen={this.state.openModal} error={this.state.metaError} closeModal={this.closeModal} data={this.InfoPet()} transactionInfo={this.state.transactionInfo}/>
                 <MDBContainer>
                     <h2 className="indigo-text font-weight-bold mt-2 mb-5"><MDBIcon far icon="edit"/> Create an ID for
                         your pet</h2>

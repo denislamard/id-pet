@@ -21,7 +21,7 @@ import Token from "./contracts/Token.json";
 class App extends Component {
     constructor(props) {
         super(props);
-        this.state = {web3: null, account: null, ipfs: null};
+        this.state = {web3: null, account: null, ipfs: null, version: null};
     }
 
     componentWillMount() {
@@ -36,13 +36,14 @@ class App extends Component {
         const networkId = await web3.eth.net.getId();
         const deployedNetwork = Token.networks[networkId];
         const instance = new web3.eth.Contract(Token.abi, deployedNetwork && deployedNetwork.address);
+        const version = await await instance.methods.version().call();
 
         this.setState({
             web3: web3,
             account: accounts[0],
             balance: web3.utils.fromWei(await web3.eth.getBalance(accounts[0]), 'ether'),
             contract: instance,
-            version: await instance.methods.version().call(),
+            version: version,
             ipfs: ipfs
         });
     }
