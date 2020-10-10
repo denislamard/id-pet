@@ -77,18 +77,6 @@ class CreatePage extends BasePage {
         if (errors.length === 0) {
             this.addToken();
         }
-        /*
-            try {
-                this.addToken();
-            } catch (err) {
-                console.log('***********************************')
-                console.log(err);
-                console.log('***********************************')
-                this.setState({metaError: err});
-            }
-        }
-
-         */
     }
 
     handleClose(event) {
@@ -130,22 +118,6 @@ class CreatePage extends BasePage {
             console.log('***********************************')
             this.setState({metaError: err});
         }
-
-
-
-        /*
-        contract.methods.addPet(account, this.InfoPet()).send({from: account})
-            .on('receipt', function (receipt) {
-                self.setState({tokenId: receipt.events.AddToken.returnValues.id});
-                const transactionInfo = {
-                    transactionHash: receipt.events.AddToken.transactionHash,
-                    blockNumber:receipt.events.AddToken.blockNumber,
-                    id: receipt.events.AddToken.returnValues.id
-                }
-                self.setState({transactionInfo: transactionInfo});
-            });
-
-         */
     };
 
     handleChange(event) {

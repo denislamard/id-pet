@@ -15,7 +15,7 @@ import {
     MDBTableHead,
     MDBCardImage,
     MDBCardTitle,
-    MDBSpinner
+    MDBSpinner, MDBInput
 } from 'mdbreact';
 import {PhotoPopup} from '../components/modal';
 import {listPets} from "../utils/list";
@@ -143,24 +143,7 @@ class ListPage extends BasePage {
     }
 
     componentDidMount() {
-        //this.makeListPets();
-        let list = [];
-        listPets(this.state.contract, this.state.account)
-            .then((pets) => {
-                Object.keys(pets).forEach(item => {
-                    list.push({
-                        id: pets[item].id,
-                        name: pets[item].name_pet,
-                        type: pets[item].type_pet,
-                        color: pets[item].color_pet,
-                        photo: <MDBBtn flat onClick={(e) => this.openModal(pets[item].photo_hash, pets[item].name_pet, e)}><img
-                            src={"https://ipfs.io/ipfs/".concat(pets[item].photo_hash)} width="40px"
-                            alt={pets[item].name_pet}/></MDBBtn>,
-                        url: "https://ipfs.io/ipfs/".concat(pets[item].photo_hash)
-                    });
-                });
-                this.setState({list: list, wait: false});
-            });
+        this.loadData();
     }
 
     handleClose(event) {

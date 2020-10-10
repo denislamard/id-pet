@@ -1,7 +1,7 @@
 {
   "name": "ID-PET",
-  "version": "0.9.0",
-  "private": true,
+  "version": "1.0.0",
+  "private": false,
   "homepage": "/",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",

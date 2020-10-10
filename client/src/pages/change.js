@@ -3,7 +3,6 @@ import {Redirect} from 'react-router'
 import {BasePage} from './base';
 import QrReader from 'react-qr-scanner'
 import {MDBBtn, MDBCard, MDBCardTitle, MDBCol, MDBContainer, MDBIcon, MDBInput, MDBRow, MDBSpinner, MDBTable, MDBTableBody, MDBTableHead} from "mdbreact";
-import {listPets} from "../utils/list";
 import ErrorMessage from "../components/errors";
 import {validationData} from "../utils/validation";
 import {TransferPopup} from '../components/modal';
@@ -68,7 +67,6 @@ class ChangePage extends BasePage {
         }
 
         this.handleClose = this.handleClose.bind(this);
-        //this.applyChanges = this.applyChanges.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleScan = this.handleScan.bind(this);
         this.onChangeCheckbox = this.onChangeCheckbox.bind(this);
@@ -76,21 +74,7 @@ class ChangePage extends BasePage {
     }
 
     componentDidMount() {
-        let list = [];
-        listPets(this.state.contract, this.state.account)
-            .then((pets) => {
-                Object.keys(pets).forEach(item => {
-                    list.push({
-                        check: <MDBInput onChange={this.onChangeCheckbox} checked={false} name={"checkbox".concat(pets[item].id)} label=" " type="checkbox" id={pets[item].id}/>,
-                        id: pets[item].id,
-                        name: pets[item].name_pet,
-                        type: pets[item].type_pet,
-                        color: pets[item].color_pet,
-                        photo: <img src={"https://ipfs.io/ipfs/".concat(pets[item].photo_hash)} width="40px" alt={pets[item].name_pet}/>
-                    });
-                });
-                this.setState({list: list, wait: false});
-            });
+        this.loadData();
     }
 
     closeModal = (event) => {
@@ -105,11 +89,12 @@ class ChangePage extends BasePage {
         this.setState({isOpen: true});
         try {
             let info = await this.state.contract.methods.safeTransferFrom(this.state.account, this.state.address, tokenId).send({from: this.state.account});
-            this.setState({transactionHash: info.transactionHash, error: null})
+            this.setState({transactionHash: info.transactionHash, error: null});
+            this.loadData();
         } catch (err) {
             this.setState({error: err});
         }
-   }
+    }
 
     handleChange(event) {
         //let addr = event.target.value;
