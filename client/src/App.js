@@ -42,6 +42,7 @@ class App extends Component {
             account: accounts[0],
             balance: web3.utils.fromWei(await web3.eth.getBalance(accounts[0]), 'ether'),
             contract: instance,
+            version: await instance.methods.version().call(),
             ipfs: ipfs
         });
     }
@@ -90,7 +91,7 @@ class App extends Component {
                         <Route path="*" component={NotFoundPage}/>
                     </Switch>
                 </HashRouter>
-                <Footer/>
+                <Footer version={this.state.version}/>
             </Fragment>
         );
     }

@@ -35,6 +35,10 @@ contract Token is ERC721, Ownable {
         _setBaseURI(baseURI);
     }
 
+    function version() public pure returns (string memory ver) {
+	return "1.0.0";
+    }
+
     function addPet(address PetOwner, PetInfo memory info) public payable {
         _petIds.increment();
         uint256 Id = _petIds.current();
