@@ -84,9 +84,10 @@ class FindPage extends BasePage {
         event.preventDefault();
         this.setState({infoPet: null});
         const errors = validationData(this.rules, this.state);
-        this.setState({errors: errors});
         if (errors.length === 0) {
             this.getInfoPet();
+        } else {
+            this.setState({errors: errors});
         }
     }
 
@@ -111,7 +112,7 @@ class FindPage extends BasePage {
                     <MDBRow center>
                         <MDBCol sm="6">
                             <div className="indigo-text create-div">
-                                <MDBInput name="findId" onChange={this.handleChange} value={this.state.findId} label="Type a valid ID" icon="user-edit" group type="text"/>
+                                <MDBInput name="findId" onChange={this.handleChange} value={this.state.findId} label="Type a valid ID" icon="pen-fancy" group type="text"/>
                             </div>
                         </MDBCol>
                     </MDBRow>
