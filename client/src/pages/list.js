@@ -143,8 +143,9 @@ class ListPage extends BasePage {
     }
 
     componentDidMount() {
-        this.loadData();
+        this.loadData(2);
     }
+
 
     handleClose(event) {
         this.setState({redirect: true});

@@ -74,7 +74,7 @@ class ChangePage extends BasePage {
     }
 
     componentDidMount() {
-        this.loadData();
+        this.loadData(1);
     }
 
     closeModal = (event) => {
