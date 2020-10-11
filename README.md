@@ -21,8 +21,19 @@ The main page has 4 actions:
 - Search for a pet
 - Give a pet to someone
 
+## Screenshots
 
 ### Main page
+![alt](https://raw.githubusercontent.com/denislamard/id-pet/master/media/image_01.png)
 
-![alt](https://denislamard.github.io/id-pet/media/image_01.png)
+### Create a pet
+![alt](https://raw.githubusercontent.com/denislamard/id-pet/master/media/image_02.png)
 
+### List of your pets
+![alt](https://raw.githubusercontent.com/denislamard/id-pet/master/media/image_03.png)
+
+### Search for a pet
+![alt](https://raw.githubusercontent.com/denislamard/id-pet/master/media/image_04.png)
+
+### Give a pet to someone
+![alt](https://raw.githubusercontent.com/denislamard/id-pet/master/media/image_04.png)
