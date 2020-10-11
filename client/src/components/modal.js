@@ -1,5 +1,6 @@
 import React from 'react';
 import {MDBBtn, MDBCol, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBRow, MDBSpinner} from 'mdbreact';
+import {makeUrlPhoto} from '../utils/functions';
 
 export const ValidationPopup = (props) => {
     const birthdate = props.data.birthdate_pet !== null ? props.data.birthdate_pet.toLocaleString().substring(1, 10) : null;
@@ -12,7 +13,7 @@ export const ValidationPopup = (props) => {
                         <MDBRow>
                             <MDBCol md="1">
                                 <img
-                                    src={"https://ipfs.io/ipfs/".concat(props.data.photo_hash)} //https://ipfs.io/ipfs/QmRTGppwz2kRBB6vwfnmpYcATNWPgCZH6wrbbU1ruFjiQT
+                                    src={makeUrlPhoto(props.data.photo_hash)} //https://ipfs.io/ipfs/QmRTGppwz2kRBB6vwfnmpYcATNWPgCZH6wrbbU1ruFjiQT
                                     alt={"ipfs data store"}
                                     style={{width: "7em"}}/>
                             </MDBCol>
@@ -67,7 +68,7 @@ export const PhotoPopup = (props) => {
                 <MDBModalBody>
                     <div className="text-center">
                         <img
-                            src={"https://ipfs.io/ipfs/".concat(props.photo_hash)} //https://ipfs.io/ipfs/QmRTGppwz2kRBB6vwfnmpYcATNWPgCZH6wrbbU1ruFjiQT
+                            src={makeUrlPhoto(props.photo_hash)} //https://ipfs.io/ipfs/QmRTGppwz2kRBB6vwfnmpYcATNWPgCZH6wrbbU1ruFjiQT
                             alt={"ipfs data store"}
                             style={{width: "22em"}}/>
                     </div>

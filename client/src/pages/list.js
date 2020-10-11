@@ -15,10 +15,9 @@ import {
     MDBTableHead,
     MDBCardImage,
     MDBCardTitle,
-    MDBSpinner, MDBInput
+    MDBSpinner,
 } from 'mdbreact';
 import {PhotoPopup} from '../components/modal';
-import {listPets} from "../utils/list";
 
 const ShowPetsAsRow = 1;
 const ShowPetsAsCard = 2;
@@ -145,7 +144,6 @@ class ListPage extends BasePage {
     componentDidMount() {
         this.loadData(2);
     }
-
 
     handleClose(event) {
         this.setState({redirect: true});

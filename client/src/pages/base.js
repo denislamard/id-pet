@@ -1,6 +1,8 @@
 import React, {Component} from "react";
 import {listPets} from "../utils/list";
 import {MDBInput, MDBBtn} from "mdbreact";
+import {makeUrlPhoto} from '../utils/functions';
+
 
 export class BasePage extends Component {
     constructor(props) {
@@ -20,7 +22,7 @@ export class BasePage extends Component {
                     name: pets[item].name_pet,
                     type: pets[item].type_pet,
                     color: pets[item].color_pet,
-                    photo: <img src={"https://ipfs.io/ipfs/".concat(pets[item].photo_hash)} width="40px" alt={pets[item].name_pet}/>
+                    photo: <img src={makeUrlPhoto(pets[item].photo_hash)} width="40px" alt={pets[item].name_pet}/>
                 }
             } else {
                 pet = {
@@ -29,9 +31,9 @@ export class BasePage extends Component {
                     type: pets[item].type_pet,
                     color: pets[item].color_pet,
                     photo: <MDBBtn flat onClick={(e) => this.openModal(pets[item].photo_hash, pets[item].name_pet, e)}><img
-                        src={"https://ipfs.io/ipfs/".concat(pets[item].photo_hash)} width="40px"
+                        src={makeUrlPhoto(pets[item].photo_hash)} width="40px"
                         alt={pets[item].name_pet}/></MDBBtn>,
-                    url: "https://ipfs.io/ipfs/".concat(pets[item].photo_hash)
+                    url: makeUrlPhoto(pets[item].photo_hash)
                 }
             }
             list.push(pet);
