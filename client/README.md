@@ -8,6 +8,10 @@ This application need the pluging **Metamask**. Please visit the Metamask site t
 
 It is mandatory to create an account ont the **testnet Goerli** (https://goerli.net/). And add some f$
 
+## Architecture diagram
+
+![alt](https://raw.githubusercontent.com/denislamard/id-pet/master/media/archi.png)
+
 
 ## Available Scripts
 
